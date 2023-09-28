@@ -27,7 +27,7 @@ func ReadENV() *AppConfig {
 	app := AppConfig{}
 	isRead := true
 
-	if val, found := os.LookupEnv("JWT_KEY"); found {
+	if val, found := os.LookupEnv("JWTSECRET"); found {
 		app.jwtKey = val
 		isRead = false
 	}
@@ -63,7 +63,7 @@ func ReadENV() *AppConfig {
 			log.Println("error read config: ", err.Error())
 			return nil
 		}
-		app.jwtKey = viper.Get("JWT_KEY").(string)
+		app.jwtKey = viper.Get("JWTSECRET").(string)
 		app.DBUsername = viper.Get("DBUSER").(string)
 		app.DBPassword = viper.Get("DBPASS").(string)
 		app.DBHost = viper.Get("DBHOST").(string)
