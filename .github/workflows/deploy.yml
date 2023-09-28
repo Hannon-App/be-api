@@ -45,4 +45,4 @@ jobs:
             docker rm hannonapp-container
             docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/hannonapp
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/hannonapp
-            docker run -d -p 8080:8080 --name hannonapp-container --env DBUSER=${{ secrets.DBUSER }} --env DBPASS=${{ secrets.DBPASS }} --env DBHOST=${{ secrets.DBHOST }} --env DBPORT=${{ secrets.DBPORT }} --env DBNAME=${{ secrets.DBNAME }} --env JWTSECRET=${{ secrets.JWTSECRET }} ${{ secrets.DOCKERHUB_USERNAME }}/hannonapp:latest
+            docker run -d -p 80:80 --name hannonapp-container --env DBUSER=${{ secrets.DBUSER }} --env DBPASS=${{ secrets.DBPASS }} --env DBHOST=${{ secrets.DBHOST }} --env DBPORT=${{ secrets.DBPORT }} --env DBNAME=${{ secrets.DBNAME }} --env JWTSECRET=${{ secrets.JWTSECRET }} ${{ secrets.DOCKERHUB_USERNAME }}/hannonapp:latest
