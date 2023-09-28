@@ -1,0 +1,197 @@
+openapi: '3.0.2'
+info:
+  title: HannonApp
+  version: '1.0'
+servers:
+  - url: https://virtserver.swaggerhub.com/hannonapp/1.0.0
+    description: SwaggerHub API Auto Mocking
+    variables: {}
+paths:
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: "Login to system as User or Tenant"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: user@hannonapp.com
+              password: qwerty123
+      responses:
+        '200':
+          description: response success login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      token:
+                        type: string
+                      role:
+                        type: string
+                      isMembership:
+                        type: boolean
+                        default: false
+              examples:
+                User:
+                  value:
+                    code: 200
+                    message: success login
+                    id: 1
+                    token: token123123--!@#%*
+                    role: user
+                    isMembership: false
+                Tenant:
+                  value:
+                    code: 200
+                    message: success login
+                    id: 1
+                    token: token123123--!@#%*
+                    role: tenant
+        '500':
+          $ref: '#/components/responses/500'
+  /admin:
+    post:
+      tags:
+        - Authentication
+      summary: "Login to system as Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: admin@hannonapp.com
+              password: admin123
+      responses:
+        '200':
+          description: response success login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      token:
+                        type: string
+                      role:
+                        type: string
+                      isMembership:
+                        type: boolean
+                        default: false
+              example:
+                code: 200
+                message: success login
+                id: 1
+                token: token123123--!@#%*
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+
+
+
+
+
+components:
+  responses:
+    '400':
+          description: response bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: string
+              example:
+                code: 400
+                message: bad request
+                data: null
+    '403':
+          description: response forbidden access
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: string
+              example:
+                code: 403
+                message: access denied
+                data: null
+    '404':
+          description: response data not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: string
+              example:
+                code: 404
+                message: data not found
+                data: null
+    '500':
+          description: response internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: string
+              example:
+                code: 500
+                message: internal server error
+                data: null
