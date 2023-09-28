@@ -2,6 +2,8 @@ package main
 
 import (
 	"Hannon-app/app/config"
+	"Hannon-app/app/database"
+	"Hannon-app/app/router"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -9,8 +11,8 @@ import (
 
 func main() {
 	cfg := config.InitConfig()
-	dbMysql := database.InitDBMysql(cfg)
-	database.InitialMigration(dbMysql)
+	dbMysql := database.InitMysql(cfg)
+	database.InittialMigration(dbMysql)
 
 	// create a new echo instance
 	e := echo.New()
