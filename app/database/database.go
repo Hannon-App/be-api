@@ -2,6 +2,7 @@ package database
 
 import (
 	"Hannon-app/app/config"
+	usersData "Hannon-app/features/users/data"
 	"fmt"
 
 	"gorm.io/driver/mysql"
@@ -20,4 +21,5 @@ func InitMysql(cfg *config.AppConfig) *gorm.DB {
 }
 
 func InittialMigration(db *gorm.DB) {
+	db.AutoMigrate(&usersData.User{})
 }
