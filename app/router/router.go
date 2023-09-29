@@ -20,5 +20,9 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 		return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "get test success", nil))
 	})
 
+	c.GET("/", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "Welcome to HannonApp!", nil))
+	})
+
 	c.POST("/login", UserHandlerAPI.Login)
 }
