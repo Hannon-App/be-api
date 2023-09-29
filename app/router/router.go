@@ -1,6 +1,9 @@
 package router
 
 import (
+	_adminData "Hannon-app/features/admins/data"
+	_adminHandler "Hannon-app/features/admins/handler"
+	_adminService "Hannon-app/features/admins/service"
 	_userData "Hannon-app/features/users/data"
 	_userHandler "Hannon-app/features/users/handler"
 	_userService "Hannon-app/features/users/service"
@@ -16,6 +19,10 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	UserService := _userService.New(UserData)
 	UserHandlerAPI := _userHandler.New(UserService)
 
+	AdminData := _adminData.New(db)
+	AdminService := _adminService.New(AdminData)
+	AdminHandlerAPI := _adminHandler.New(AdminService)
+
 	c.GET("/test", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "get test success", nil))
 	})
@@ -24,5 +31,9 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 		return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "Welcome to HannonApp!", nil))
 	})
 
+	//Users
 	c.POST("/login", UserHandlerAPI.Login)
+
+	//Admin
+	c.POST("/admin", AdminHandlerAPI.Login)
 }
