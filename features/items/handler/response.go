@@ -1,8 +1,8 @@
-package data
+package handler
 
 import "Hannon-app/features/items"
 
-type Item struct {
+type ItemResponseAll struct {
 	ID               uint   `gorm:"column:id;primaryKey"`
 	Name             string `gorm:"name;not null"`
 	Stock            uint   `gorm:"stock;not null"`
@@ -13,8 +13,8 @@ type Item struct {
 	Lost_Cost        uint   `gorm:"lost_cost;not null"`
 }
 
-func ItemCoreToModel(input items.ItemCore) Item {
-	var itemModel = Item{
+func ItemCoreToResponseAll(input items.ItemCore) ItemResponseAll {
+	var itemResp = ItemResponseAll{
 		ID:               input.ID,
 		Name:             input.Name,
 		Stock:            input.Stock,
@@ -24,19 +24,5 @@ func ItemCoreToModel(input items.ItemCore) Item {
 		Broke_Cost:       input.Broke_Cost,
 		Lost_Cost:        input.Lost_Cost,
 	}
-	return itemModel
-}
-
-func ModelToCore(input Item) items.ItemCore {
-	var itemCore = items.ItemCore{
-		ID:               input.ID,
-		Name:             input.Name,
-		Stock:            input.Stock,
-		Rent_Price:       input.Rent_Price,
-		Image:            input.Image,
-		Description_Item: input.Description_Item,
-		Broke_Cost:       input.Broke_Cost,
-		Lost_Cost:        input.Lost_Cost,
-	}
-	return itemCore
+	return itemResp
 }
