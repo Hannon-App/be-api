@@ -23,7 +23,6 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	UserService := _userService.New(UserData)
 	UserHandlerAPI := _userHandler.New(UserService)
 
-
 	ItemData := _itemData.New(db)
 	ItemService := _itemService.New(ItemData)
 	ItemHandlerAPI := _itemHandler.New(ItemService)
@@ -31,7 +30,6 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	AdminData := _adminData.New(db)
 	AdminService := _adminService.New(AdminData)
 	AdminHandlerAPI := _adminHandler.New(AdminService)
-
 
 	c.GET("/test", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "get test success", nil))
@@ -44,11 +42,9 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	//Users
 	c.POST("/login", UserHandlerAPI.Login)
 
-
 	c.GET("/items", ItemHandlerAPI.GetAll)
 	c.DELETE("/items/:item_id", ItemHandlerAPI.DeleteItem)
 	c.GET("/items/:item_id", ItemHandlerAPI.GetItemByID)
-
 
 	//Admin
 	c.POST("/admin", AdminHandlerAPI.Login)

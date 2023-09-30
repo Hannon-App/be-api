@@ -11,12 +11,15 @@ import (
 var JWT_SECRRET = ""
 
 type AppConfig struct {
-	DBUsername string
-	DBPassword string
-	DBHost     string
-	DBPort     int
-	DBName     string
-	jwtKey     string
+	DBUsername     string
+	DBPassword     string
+	DBHost         string
+	DBPort         int
+	DBName         string
+	jwtKey         string
+	CLOUD_NAME     string
+	KEY_API        string
+	KEY_API_SECRET string
 }
 
 func InitConfig() *AppConfig {
@@ -52,6 +55,19 @@ func ReadENV() *AppConfig {
 		app.DBName = val
 		isRead = false
 	}
+	if val, found := os.LookupEnv("CLOUDINARY_CLOUD_NAME"); found {
+		app.CLOUD_NAME = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("CLOUDINARY_KEY_API"); found {
+		app.KEY_API = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("CLOUDINARY_KEY_API_SECRET"); found {
+		app.KEY_API_SECRET = val
+		isRead = false
+	}
+
 	if isRead {
 		viper.AddConfigPath(".")
 		viper.SetConfigName("local")

@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"Hannon-app/app/middlewares"
 	"Hannon-app/features/users"
 	"Hannon-app/helpers"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -39,4 +41,33 @@ func (handler *UserHandler) Login(c echo.Context) error {
 		Token: token,
 	}
 	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success login", response))
+}
+
+func (handler *UserHandler) Add(c echo.Context) error {
+	idUser := middlewares.ExtractTokenUserId(c)
+
+	var request UserRequest
+	errBind := c.Bind(&request)
+	if errBind != nil {
+		return helpers.FailedRequest(c, "error bind data"+errBind.Error(), nil)
+	}
+	link, errLink := helpers.UploadImage(c)
+	if errLink != nil {
+		return helpers.FailedRequest(c, errLink.Error(), nil)
+	}
+
+	fmt.Println(request)
+	entity := RequestToCore(request)
+	entity.ID = idUser
+	entity.UploadKTP = link
+	entity.ProfilePhoto = link
+	err := handler.userService.Add(entity)
+	if err != nil {
+		if strings.Contains(err.Error(), "validation") {
+			return helpers.FailedRequest(c, err.Error(), nil)
+		} else {
+			return helpers.InternalError(c, err.Error(), nil)
+		}
+	}
+	return helpers.SuccessCreate(c, "success create reimbursment", nil)
 }
