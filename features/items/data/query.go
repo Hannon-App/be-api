@@ -63,3 +63,26 @@ func (repo *ItemQuery) SelectById(id uint) (items.ItemCore, error) {
 	resultCore := ModelToCore(result)
 	return resultCore, nil
 }
+
+func (repo *ItemQuery) Insert(input items.ItemCore) (items.ItemCore, error) {
+
+	itemGorm := ItemCoreToModel(input)
+	tx := repo.db.Create(&itemGorm) // proses query insert
+	if tx.Error != nil {
+		return items.ItemCore{}, tx.Error
+	}
+	return ModelToCore(itemGorm), nil
+}
+
+func (repo *ItemQuery) UpdateDataItem(id uint, input items.ItemCore) (items.ItemCore, error) {
+	itemGorm := ItemCoreToModel(input)
+	tx := repo.db.Model(&Item{}).Where("id = ?", id).Updates(itemGorm)
+	if tx.Error != nil {
+		return items.ItemCore{}, tx.Error
+	}
+
+	if tx.RowsAffected == 0 {
+		return items.ItemCore{}, errors.New("item not found")
+	}
+	return ModelToCore(itemGorm), nil
+}
