@@ -12,7 +12,7 @@ type User struct {
 	Address      string `gorm:"address;not null"`
 	ProfilePhoto string `gorm:"column:profile_photo"`
 	UploadKTP    string `gorm:"column:ktp_photo"`
-	Membership   bool   `gorm:"column:Membership"`
+	Membership   bool   `gorm:"column:membership"`
 }
 
 func UserCoreToModel(input users.UserCore) User {

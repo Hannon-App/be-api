@@ -91,3 +91,10 @@ func InternalError(c echo.Context, message string, data any) error {
 		"data":    data,
 	})
 }
+
+func SuccessWithOutData(c echo.Context, message string) error {
+	return c.JSON(http.StatusOK, map[string]any{
+		"status":  "success",
+		"message": message,
+	})
+}

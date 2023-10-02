@@ -13,37 +13,35 @@ type UserService struct {
 	validate *validator.Validate
 }
 
+// Deletebyid implements users.UserServiceInterface
+func (service *UserService) Deletebyid(id uint) error {
+	err := service.userData.Delete(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// GetUserById implements users.UserServiceInterface
+func (service *UserService) GetUserById(id uint) (users.UserCore, error) {
+	result, err := service.userData.SelectById(id)
+	if err != nil {
+		return users.UserCore{}, err
+	}
+	return result, nil
+}
+
 // Add implements users.UserServiceInterface
 func (service *UserService) Add(input users.UserCore) error {
 	errValidate := service.validate.Struct(input)
 	if errValidate != nil {
 		return errors.New("error validate, user required")
 	}
-	if input.Name == "" {
-		return errors.New("validation error. name required")
-	}
-	if input.UserName != "" {
-		return errors.New("validation error. username required")
-	}
-	if input.Email != "" {
-		return errors.New("validation error. email required")
-	}
-	if input.Password != "" {
-		return errors.New("validation error. password required")
-	}
-	if len(input.Password) <= 7 {
+
+	if len(input.Password) < 8 {
 		return errors.New("validation error. password harus minimal 8 characters")
 	}
 
-	if input.PhoneNumber != "" {
-		return errors.New("validation error. Nomor telepon required")
-	}
-	if input.ProfilePhoto != "" {
-		return errors.New("validation error. foto Profil belum diisi")
-	}
-	if input.UploadKTP != "" {
-		return errors.New("validation error. Foto KTP belum diisi")
-	}
 	errInsert := service.userData.Insert(input)
 	if errInsert != nil {
 		return errInsert
@@ -54,6 +52,7 @@ func (service *UserService) Add(input users.UserCore) error {
 func New(repo users.UserDataInterface) users.UserServiceInterface {
 	return &UserService{
 		userData: repo,
+		validate: validator.New(),
 	}
 }
 
