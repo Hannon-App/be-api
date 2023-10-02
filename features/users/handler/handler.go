@@ -44,18 +44,18 @@ func (handler *UserHandler) Login(c echo.Context) error {
 }
 
 func (handler *UserHandler) AddUser(c echo.Context) error {
-	link, errUpload := helpers.UploadImage(c)
-	if errUpload != nil {
-		return helpers.FailedRequest(c, errUpload.Error(), nil)
-	}
+	profilePhotoURL, ktpPhotoURL, _ := helpers.UploadImage(c)
 
 	var input UserRequest
 	errBind := c.Bind(&input)
 	if errBind != nil {
 		return helpers.FailedNotFound(c, "error binding", nil)
 	}
+
 	entity := RequestToCore(input)
-	entity.ProfilePhoto = link
+	entity.ProfilePhoto = profilePhotoURL
+	entity.UploadKTP = ktpPhotoURL
+
 	err := handler.userService.Add(entity)
 	if err != nil {
 		if strings.Contains(err.Error(), "validation") {
@@ -64,6 +64,7 @@ func (handler *UserHandler) AddUser(c echo.Context) error {
 			return helpers.InternalError(c, err.Error(), nil)
 		}
 	}
+
 	return helpers.SuccessWithOutData(c, "success create Users")
 }
 
