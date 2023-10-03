@@ -21,9 +21,13 @@ type Login struct {
 type UserDataInterface interface {
 	Login(email, password string) (UserCore, error)
 	Insert(input UserCore) error
+	SelectById(id uint) (UserCore, error)
+	Delete(id uint) error
 }
 
 type UserServiceInterface interface {
 	Login(email, password string) (UserCore, string, error)
 	Add(input UserCore) error
+	GetUserById(id uint) (UserCore, error)
+	Deletebyid(id uint) error
 }

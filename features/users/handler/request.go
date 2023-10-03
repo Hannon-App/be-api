@@ -3,16 +3,13 @@ package handler
 import "Hannon-app/features/users"
 
 type UserRequest struct {
-	ID           uint   `gorm:"column:id;primaryKey"`
-	Name         string `gorm:"name;not null"`
-	UserName     string `gorm:"user_name;not null"`
-	Email        string `gorm:"email;not null"`
-	PhoneNumber  string `gorm:"phone_number;not null"`
-	Password     string `gorm:"password;not null"`
-	Address      string `gorm:"address;not null"`
-	ProfilePhoto string `gorm:"column:profile_photo"`
-	UploadKTP    string `gorm:"column:ktp_photo"`
-	Membership   bool   `gorm:"column:Membership"`
+	Name         string `json:"name" form:"name"`
+	Email        string `json:"email" form:"email"`
+	PhoneNumber  string `json:"phone_number" form:"phone_number"`
+	Password     string `json:"password" form:"password"`
+	Address      string `json:"address" form:"address"`
+	ProfilePhoto string `json:"profil_photo" form:"profil_photo"`
+	UploadKTP    string `json:"ktp_photo" form:"ktp_photo"`
 }
 
 type LoginRequest struct {
@@ -28,15 +25,12 @@ func Login(login LoginRequest) users.Login {
 }
 func RequestToCore(user UserRequest) users.UserCore {
 	return users.UserCore{
-		ID:           user.ID,
 		Name:         user.Name,
-		UserName:     user.UserName,
 		Email:        user.Email,
 		PhoneNumber:  user.PhoneNumber,
 		Password:     user.Password,
 		Address:      user.Address,
 		ProfilePhoto: user.ProfilePhoto,
 		UploadKTP:    user.UploadKTP,
-		Membership:   user.Membership,
 	}
 }

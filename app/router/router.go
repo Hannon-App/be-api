@@ -1,9 +1,11 @@
 package router
 
 import (
+	"Hannon-app/app/middlewares"
 	_adminData "Hannon-app/features/admins/data"
 	_adminHandler "Hannon-app/features/admins/handler"
 	_adminService "Hannon-app/features/admins/service"
+
 	_userData "Hannon-app/features/users/data"
 	_userHandler "Hannon-app/features/users/handler"
 	_userService "Hannon-app/features/users/service"
@@ -51,6 +53,9 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 
 	//Users
 	c.POST("/login", UserHandlerAPI.Login)
+	c.POST("/users", UserHandlerAPI.AddUser)
+	c.GET("/users/:user_id", UserHandlerAPI.GetUsertById, middlewares.JWTMiddleware())
+	c.DELETE("/users/:user_id", UserHandlerAPI.DeleteUser, middlewares.JWTMiddleware())
 
 	c.GET("/items", ItemHandlerAPI.GetAll)
 	c.DELETE("/items/:item_id", ItemHandlerAPI.DeleteItem)
