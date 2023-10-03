@@ -3,6 +3,8 @@ package database
 import (
 	"Hannon-app/app/config"
 
+	tenantData "Hannon-app/features/tenants/data"
+
 	itemsData "Hannon-app/features/items/data"
 
 	adminsData "Hannon-app/features/admins/data"
@@ -31,5 +33,7 @@ func InittialMigration(db *gorm.DB) {
 	db.AutoMigrate(&itemsData.Item{})
 
 	db.AutoMigrate(&adminsData.Admin{})
+
+	db.AutoMigrate(&tenantData.Tenant{})
 
 }
