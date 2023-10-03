@@ -11,12 +11,15 @@ import (
 var JWT_SECRRET = ""
 
 type AppConfig struct {
-	DBUsername string
-	DBPassword string
-	DBHost     string
-	DBPort     int
-	DBName     string
-	jwtKey     string
+	DBUsername     string
+	DBPassword     string
+	DBHost         string
+	DBPort         int
+	DBName         string
+	jwtKey         string
+	CLOUD_NAME     string
+	KEY_API        string
+	KEY_API_SECRET string
 }
 
 func InitConfig() *AppConfig {
@@ -27,7 +30,7 @@ func ReadENV() *AppConfig {
 	app := AppConfig{}
 	isRead := true
 
-	if val, found := os.LookupEnv("JWTSECRET"); found {
+	if val, found := os.LookupEnv("JWT_KEY"); found {
 		app.jwtKey = val
 		isRead = false
 	}
@@ -52,6 +55,18 @@ func ReadENV() *AppConfig {
 		app.DBName = val
 		isRead = false
 	}
+	if val, found := os.LookupEnv("CLOUDINARY_CLOUD_NAME"); found {
+		app.CLOUD_NAME = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("CLOUDINARY_KEY_API"); found {
+		app.KEY_API = val
+		isRead = false
+	}
+	if val, found := os.LookupEnv("CLOUDINARY_KEY_API_SECRET"); found {
+		app.KEY_API_SECRET = val
+		isRead = false
+	}
 	if isRead {
 		viper.AddConfigPath(".")
 		viper.SetConfigName("local")
@@ -63,12 +78,15 @@ func ReadENV() *AppConfig {
 			log.Println("error read config: ", err.Error())
 			return nil
 		}
-		app.jwtKey = viper.Get("JWTSECRET").(string)
+		app.jwtKey = viper.Get("JWT_KEY").(string)
 		app.DBUsername = viper.Get("DBUSER").(string)
 		app.DBPassword = viper.Get("DBPASS").(string)
 		app.DBHost = viper.Get("DBHOST").(string)
 		app.DBPort, _ = strconv.Atoi(viper.Get("DBPORT").(string))
 		app.DBName = viper.Get("DBNAME").(string)
+		app.KEY_API = viper.Get("KEY_API").(string)
+		app.KEY_API_SECRET = viper.Get("KEY_API_SECRET").(string)
+		app.CLOUD_NAME = viper.Get("CLOUD_NAME").(string)
 	}
 	JWT_SECRRET = app.jwtKey
 	return &app
