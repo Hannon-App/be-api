@@ -8,6 +8,10 @@ import (
 	_userHandler "Hannon-app/features/users/handler"
 	_userService "Hannon-app/features/users/service"
 
+	_tenantData "Hannon-app/features/tenants/data"
+	_tenantHandler "Hannon-app/features/tenants/handler"
+	_tenantService "Hannon-app/features/tenants/service"
+
 	_itemData "Hannon-app/features/items/data"
 	_itemHandler "Hannon-app/features/items/handler"
 	_itemService "Hannon-app/features/items/service"
@@ -31,6 +35,12 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	AdminService := _adminService.New(AdminData)
 	AdminHandlerAPI := _adminHandler.New(AdminService)
 
+	TenantData := _tenantData.New(db)
+	TenantService := _tenantService.New(TenantData)
+	TenantHandlerAPI := _tenantHandler.New(TenantService)
+
+
+
 	c.GET("/test", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "get test success", nil))
 	})
@@ -45,10 +55,16 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	c.GET("/items", ItemHandlerAPI.GetAll)
 	c.DELETE("/items/:item_id", ItemHandlerAPI.DeleteItem)
 	c.GET("/items/:item_id", ItemHandlerAPI.GetItemByID)
+
+
 	c.POST("/items", ItemHandlerAPI.CreateItem)
 	c.PUT("/items/:item_id", ItemHandlerAPI.UpdateItemByID)
 
+
 	//Admin
 	c.POST("/admin", AdminHandlerAPI.Login)
+
+	//Tenant
+	c.POST("/tenant", TenantHandlerAPI.Insert)
 
 }
