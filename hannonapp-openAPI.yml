@@ -3,15 +3,67 @@ info:
   title: HannonApp
   version: '1.0'
 servers:
-  - url: https://virtserver.swaggerhub.com/hannonapp/1.0.0
-    description: SwaggerHub API Auto Mocking
+  - url: https://hannonapp.site/
+    description: API server for HannonApp
     variables: {}
-paths:
+paths:       
+  /login-tenant:
+    post:
+      tags:
+        - Authentication
+      summary: Login to system as Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              example:
+                email: tenant@hannonapp.com
+                password: password
+      responses:
+        '200':
+          description: response success login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      token:
+                        type: string
+                      role:
+                        type: string
+              example:
+                code: 200
+                message: success login
+                data:
+                  id: 1
+                  token: token123123--
+                  role: tenant
+        '400':
+          $ref: '#/components/responses/400'
+        '500':
+          $ref: '#/components/responses/500'
+
   /login:
     post:
       tags:
         - Authentication
-      summary: "Login to system as User or Tenant"
+      summary: Login to system as User
       requestBody:
         required: true
         content:
@@ -50,22 +102,14 @@ paths:
                       isMembership:
                         type: boolean
                         default: false
-              examples:
-                User:
-                  value:
-                    code: 200
-                    message: success login
-                    id: 1
-                    token: token123123--!@#%*
-                    role: user
-                    isMembership: false
-                Tenant:
-                  value:
-                    code: 200
-                    message: success login
-                    id: 1
-                    token: token123123--!@#%*
-                    role: tenant
+              example:
+                code: 200
+                message: success login
+                data:
+                  id: 1
+                  token: token123123--!@#%*
+                  role: user
+                  isMembership: false
         '500':
           $ref: '#/components/responses/500'
   /admin:
@@ -108,24 +152,446 @@ paths:
                         type: string
                       role:
                         type: string
-                      isMembership:
-                        type: boolean
-                        default: false
               example:
                 code: 200
                 message: success login
-                id: 1
-                token: token123123--!@#%*
+                data:
+                  id: 1
+                  token: token123123--!@#%*
+                  role: admin
         '403':
           $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+  /users:
+    post:
+      # deprecated: true
+        summary: "Add New User"
+        security:
+          - bearerAuth: []
+        tags:
+          - "Users"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema: 
+                allOf:
+                  - type: object
+                  - $ref: '#/components/schemas/Users'
+              example:
+                name: "User1"
+                user_name: "user1"
+                email: "user@mail.com"
+                password : "password"
+                address: "Malang"
+                phone_number:  "085722631571"
+                profile_photo:  "user1.jpg"
+                ktp_photo: "ktp1.jpg"
+        responses:
+          201:
+            description: "Sucess register new user"
+            content:
+              application/json:
+                schema:
+                  allOf:
+                    - type: object
+                    - $ref: '#/components/schemas/ResponseObj'
+                example:
+                  message: "success register new user"
+              
+                    
+          404:
+            $ref: '#/components/responses/404'
+          500:
+            $ref: '#/components/responses/500'
+            
+  
+  
+  /users/{user_id}:
+    get:
+      summary: "Get specific user information"
+      security:
+        - bearerAuth: []
+      tags:
+        - "Users"
+      parameters:
+        - in: path
+          required: true
+          name: "user_id"
+          schema:
+            type: string
+      responses:
+          200:
+            description: "Success get specific user information"
+            content:
+              application/json:
+                schema:
+                  allOf:
+                    - type: object
+                    - $ref: '#/components/schemas/ResponseObj'
+                example:
+                  message: "Success get specific user information"
+                  data:
+                    id: 1
+                    name: "User1"
+                    user_name: "user1"
+                    email: "user@mail.com"
+                    password : "password"
+                    phone_number:  "085722631571"
+                    profile_photo:  "user1.jpg"
+                    membership: false / true
+                    address: "Malang"
+                    ktp_photo: "ktp.jpg"
+                    membership_id: 1          
+          404:
+            $ref: '#/components/responses/404'
+          500:
+            $ref: '#/components/responses/500'
+            
+    put:
+      # deprecated: true
+      summary: "Update user data"
+      security:
+        - bearerAuth: []
+      tags:
+        - "Users"
+      parameters:
+        - in: path
+          required: true
+          name: "user_id"
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              allOf:
+                - type: object
+                - $ref: '#/components/schemas/Users'
+            example:
+              name: "User1"
+              user_name: "user1"
+              email: "user@mail.com"
+              password : "password"
+              address: "Surabaya"
+              phone_number:  "085722631571"
+              profile_photo:  "user1.jpg"
+              ktp_photo: "ktp1.jpg"
+      responses:
+        201:
+          description: "Update User Sucess"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                  - $ref: '#/components/schemas/ResponseObj'
+              example:
+                message: "Update success"
+                
+                    
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+                  
+    delete:
+      summary: "Deactive User"
+      security:
+        - bearerAuth: []
+      tags:
+        - "Users"
+      parameters:
+        - in: path
+          required: true
+          name: "user_id"
+          schema:
+            type: integer
+      responses:
+        200: 
+          description: "Success deactive account"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                  - $ref: '#/components/schemas/ResponseObj'
+              example:
+                message: "Success deactive account"
+                data: null
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /tenant:
+    post:
+      tags:
+        - Tenant
+      summary: Register Tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                phone:
+                  type: string
+                address:
+                  type: string
+                image:
+                  type: string
+                idcard_photo:
+                  type: string
+              example:
+                name: Eger
+                username: Egerindo
+                email: tim@eger.com
+                password: egerindo123
+                phone: 09405
+                address: jakarta
+                image: egerlogo.png
+                idcard_photo: ceoeger.png
+      responses:
+        '201':
+          description: response success register tenant
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                example:
+                  code: 201
+                  message: success register tenant
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500' 
+    get:
+      tags:
+        - Tenant
+      summary: Get all Tenant data
+      responses:
+        '200':
+          description: response success get all tenant data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        username:
+                          type: string
+                        email:
+                          type: string
+                        phone:
+                          type: string
+                        address:
+                          type: string
+                        image:
+                          type: string
+              example:
+                code: 200
+                message: success read all tenant data
+                data:
+                  - id: 1
+                    name: eger
+                    username: egerindo
+                    email: tim@eger.com
+                    phone: 09444
+                    address: jl indonesia, jakarta
+                    image: logoeger.png
+                  - id: 2
+                    name: ares
+                    username: areshike
+                    email: support@are.com
+                    phone: 08852
+                    address: jl gunung, bandung
+                    image: logoare.png
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      tags:
+        - "Tenant"
+      summary: Update Tenant data 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                address:
+                  type: string
+                image:
+                  type: string
+            example:
+              name: egerz
+              username: egerzindo
+              email: admin@egerzindo.com
+              password: egerz123
+              address: jalan jakarta indonesia, jakarta
+              image: new-logo.png
+      responses:
+        '200':
+          description: response success update tenant data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+              example:
+                code: 200
+                message: success update tenant data
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+  /tenant/{tenant_id}:
+    delete:
+      tags:
+        - Tenant
+      summary: Delete Tenant data
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          description: delete tenant data by admin
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: response success delete tenant data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+              example:
+                code: 200
+                message: success delete tenant data
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
 
 
 
 
-
+                      
 components:
+  schemas:
+    Users:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: integer
+        name:
+          type: string
+          format: string
+        user_name:
+          type: string
+          format: string
+        email:
+          type: string
+          format: string
+        password:
+          type: string
+          format: string
+        phone_number:
+          type: string
+          format: string
+        photo_profile:
+          type: string
+          format: string
+        membership:
+          type: boolean
+          format: boolean
+        address:
+          type: string
+          format: string
+        upload_ktp:
+          type: string
+          format: string
+        membership_id:
+          type: integer
+          format: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ResponseObj:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: object
+    ResponseArr:
+      type: object
+      properties:
+        message:
+          type: string
+        data:
+          type: array
+          items: 
+            type: object
   responses:
     '400':
           description: response bad request
