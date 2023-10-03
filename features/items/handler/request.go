@@ -3,13 +3,13 @@ package handler
 import "Hannon-app/features/items"
 
 type ItemRequest struct {
-	Name             string `json:"name" validate:"required"`
-	Stock            uint   `json:"stock" validate:"required,gte=0"`
-	Rent_Price       uint   `json:"rent_price" validate:"required,gte=0"`
-	Image            string `json:"image"`
-	Description_Item string `json:"description_item"`
-	Broke_Cost       uint   `json:"broke_cost" validate:"required,gte=0"`
-	Lost_Cost        uint   `json:"lost_cost" validate:"required,gte=0"`
+	Name             string `json:"name" form:"name" validate:"required"`
+	Stock            uint   `json:"stock" form:"stock" validate:"required"`
+	Rent_Price       uint   `json:"rent_price" form:"rent_price" validate:"required"`
+	Image            string `json:"image" form:"image"`
+	Description_Item string `json:"description_item" form:"description_item"`
+	Broke_Cost       uint   `json:"broke_cost" form:"broke_cost" validate:"required"`
+	Lost_Cost        uint   `json:"lost_cost" form:"lost_cost" validate:"required"`
 }
 
 func RequestToCore(input ItemRequest) items.ItemCore {

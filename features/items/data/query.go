@@ -2,7 +2,9 @@ package data
 
 import (
 	"Hannon-app/features/items"
+	"Hannon-app/helpers"
 	"errors"
+	"mime/multipart"
 
 	"gorm.io/gorm"
 )
@@ -88,14 +90,30 @@ func (repo *ItemQuery) SelectById(id uint) (items.ItemCore, error) {
 	return resultCore, nil
 }
 
-func (repo *ItemQuery) Insert(input items.ItemCore) (items.ItemCore, error) {
+func (repo *ItemQuery) Insert(input items.ItemCore, file multipart.File, filename string) error {
 
-	itemGorm := ItemCoreToModel(input)
-	tx := repo.db.Create(&itemGorm) // proses query insert
-	if tx.Error != nil {
-		return items.ItemCore{}, tx.Error
+	var itemModel = ItemCoreToModel(input)
+
+	if filename == "default.png" {
+		itemModel.Image = filename
+	} else {
+		nameGen, errGen := helpers.GenerateName()
+		if errGen != nil {
+			return errGen
+		}
+		itemModel.Image = nameGen + filename
+		errUp := helpers.Uploader.UploadFile(file, itemModel.Image)
+
+		if errUp != nil {
+			return errUp
+		}
 	}
-	return ModelToCore(itemGorm), nil
+
+	tx := repo.db.Create(&itemModel)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	return nil
 }
 
 func (repo *ItemQuery) UpdateDataItem(id uint, input items.ItemCore) (items.ItemCore, error) {
