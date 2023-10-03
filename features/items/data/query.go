@@ -17,12 +17,33 @@ func New(db *gorm.DB) items.ItemDataInterface {
 	}
 }
 
-func (repo *ItemQuery) ReadAll() ([]items.ItemCore, error) {
+func (repo *ItemQuery) ReadAll(page, itemPerPage uint, searchName string) ([]items.ItemCore, int64, error) {
 	var itemData []Item
-	tx := repo.db.Find(&itemData)
-	if tx.Error != nil {
-		return nil, tx.Error
+	var totalCount int64
+
+	if page == 0 && itemPerPage == 0 {
+		tx := repo.db
+
+		if searchName != "" {
+			tx = tx.Where("name LIKE ?", "%"+searchName+"%")
+		}
+		tx.Find(&itemData)
+	} else {
+
+		offset := int((page - 1) * itemPerPage)
+
+		query := repo.db.Offset(offset).Limit(int(itemPerPage))
+
+		if searchName != "" {
+			query = query.Where("name LIKE ?", "%"+searchName+"%")
+		}
+
+		tx := query.Find(&itemData)
+		if tx.Error != nil {
+			return nil, 0, tx.Error
+		}
 	}
+
 	var itemCore []items.ItemCore
 	for _, value := range itemData {
 		itemCore = append(itemCore, items.ItemCore{
@@ -36,7 +57,10 @@ func (repo *ItemQuery) ReadAll() ([]items.ItemCore, error) {
 			Lost_Cost:        value.Lost_Cost,
 		})
 	}
-	return itemCore, nil
+
+	repo.db.Model(&Item{}).Count(&totalCount)
+
+	return itemCore, totalCount, nil
 }
 
 func (repo *ItemQuery) Delete(id uint) error {

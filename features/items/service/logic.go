@@ -17,12 +17,22 @@ func New(repo items.ItemDataInterface) items.ItemServiceInterface {
 	}
 }
 
-func (service *ItemService) GetAllItem() ([]items.ItemCore, error) {
-	result, err := service.itemData.ReadAll()
-	if err != nil {
-		return []items.ItemCore{}, err
+func (service *ItemService) GetAllItem(page, item uint, search_name string) ([]items.ItemCore, bool, error) {
+	result, count, err := service.itemData.ReadAll(page, item, search_name)
+
+	next := true
+	var pages int64
+	if item != 0 {
+		pages = count / int64(item)
+		if count%int64(item) != 0 {
+			pages += 1
+		}
+		if page == uint(pages) {
+			next = false
+		}
 	}
-	return result, err
+
+	return result, next, err
 }
 
 func (service *ItemService) Delete(id uint) error {
