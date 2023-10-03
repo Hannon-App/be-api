@@ -53,7 +53,7 @@ func (repo *UserQuery) SelectById(id uint) (users.UserCore, error) {
 func (repo *UserQuery) Insert(input users.UserCore) error {
 	inputModel := UserCoreToModel(input)
 
-	hass, errHass := helpers.HassPassword(inputModel.Password)
+	hass, errHass := helpers.HashPassword(inputModel.Password)
 	if errHass != nil {
 		return errHass
 	}
