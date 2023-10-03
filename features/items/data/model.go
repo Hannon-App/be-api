@@ -8,7 +8,7 @@ type Item struct {
 	Stock            uint   `gorm:"stock;not null"`
 	Rent_Price       uint   `gorm:"rent_price;not null"`
 	Image            string `gorm:"image;not null"`
-	Description_Item string `gorm:"description;not null"`
+	Description_Item string `gorm:"description_item;not null"`
 	Broke_Cost       uint   `gorm:"broke_cost;not null"`
 	Lost_Cost        uint   `gorm:"lost_cost;not null"`
 }
