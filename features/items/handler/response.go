@@ -13,14 +13,14 @@ type ItemResponse struct {
 }
 
 type ItemResponseAll struct {
-	ID               uint   `gorm:"column:id;primaryKey"`
-	Name             string `gorm:"name;not null"`
-	Stock            uint   `gorm:"stock;not null"`
-	Rent_Price       uint   `gorm:"rent_price;not null"`
-	Image            string `gorm:"image;not null"`
-	Description_Item string `gorm:"description_item;not null"`
-	Broke_Cost       uint   `gorm:"broke_cost;not null"`
-	Lost_Cost        uint   `gorm:"lost_cost;not null"`
+	ID               uint   `json:"id"`
+	Name             string `json:"name"`
+	Stock            uint   `json:"stock"`
+	Rent_Price       uint   `json:"rent_price"`
+	Image            string `json:"image"`
+	Description_Item string `json:"description_item"`
+	Broke_Cost       uint   `json:"broke_cost"`
+	Lost_Cost        uint   `json:"lost_cost"`
 }
 
 func ItemCoreToResponseAll(input items.ItemCore) ItemResponseAll {
