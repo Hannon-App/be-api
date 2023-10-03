@@ -12,7 +12,7 @@ type ItemCore struct {
 }
 
 type ItemDataInterface interface {
-	ReadAll() ([]ItemCore, error)
+	ReadAll(page, item uint, search_name string) ([]ItemCore, int64, error)
 	Delete(id uint) error
 	SelectById(id uint) (ItemCore, error)
 	Insert(input ItemCore) (ItemCore, error)
@@ -20,7 +20,7 @@ type ItemDataInterface interface {
 }
 
 type ItemServiceInterface interface {
-	GetAllItem() ([]ItemCore, error)
+	GetAllItem(page, item uint, search_name string) ([]ItemCore, bool, error)
 	Delete(id uint) error
 	GetById(id uint) (ItemCore, error)
 	Create(input ItemCore) (ItemCore, error)
