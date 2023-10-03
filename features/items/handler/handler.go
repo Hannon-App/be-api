@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 )
 
@@ -22,7 +23,27 @@ func New(service items.ItemServiceInterface) *ItemHandler {
 
 func (handler *ItemHandler) GetAll(c echo.Context) error {
 
-	result, err := handler.itemService.GetAllItem()
+	var pageConv, itemConv int
+	var errPageConv, errItemConv error
+
+	page := c.QueryParam("page")
+	if page != "" {
+		pageConv, errPageConv = strconv.Atoi(page)
+		if errPageConv != nil {
+			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid", nil))
+		}
+	}
+	item := c.QueryParam("itemPerPage")
+	if item != "" {
+		itemConv, errItemConv = strconv.Atoi(item)
+		if errItemConv != nil {
+			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid", nil))
+		}
+	}
+
+	search_name := c.QueryParam("searchName")
+
+	result, next, err := handler.itemService.GetAllItem(uint(pageConv), uint(itemConv), search_name)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "error read data", nil))
 	}
@@ -40,7 +61,7 @@ func (handler *ItemHandler) GetAll(c echo.Context) error {
 		})
 
 	}
-	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success read data", itemResponse))
+	return c.JSON(http.StatusOK, helpers.FindAllWebResponse(http.StatusOK, "success read data", itemResponse, next))
 }
 
 func (handler *ItemHandler) DeleteItem(c echo.Context) error {
@@ -80,4 +101,80 @@ func (handler *ItemHandler) GetItemByID(c echo.Context) error {
 	resultResponse := ItemCoreToResponseAll(result)
 
 	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "Success get item data", resultResponse))
+}
+
+func (handler *ItemHandler) CreateItem(c echo.Context) error {
+	itemInput := new(ItemRequest)
+	errBind := c.Bind(&itemInput)
+
+	if errBind != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "error bind data. data not valid", nil))
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(itemInput); err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, err.Error(), nil))
+	}
+
+	itemCore := RequestToCore(*itemInput)
+	result, err := handler.itemService.Create(itemCore)
+	if err != nil {
+		if strings.Contains(err.Error(), "validation") {
+			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, err.Error(), nil))
+		} else {
+			return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "error insert data", nil))
+		}
+	}
+
+	Response := ItemCreateResponse{
+		ID:               result.ID,
+		Name:             result.Name,
+		Stock:            result.Stock,
+		Rent_Price:       result.Rent_Price,
+		Image:            result.Image,
+		Description_Item: result.Description_Item,
+		Broke_Cost:       result.Broke_Cost,
+		Lost_Cost:        result.Lost_Cost,
+	}
+	return c.JSON(http.StatusCreated, helpers.WebResponse(http.StatusCreated, "success insert data", Response))
+}
+
+func (handler *ItemHandler) UpdateItemByID(c echo.Context) error {
+	idItemStr := c.Param("item_id")
+	idItem, errItem := strconv.Atoi(idItemStr)
+	if errItem != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "item id invalid", nil))
+	}
+
+	itemInput := new(ItemUpdateRequest)
+	errBind := c.Bind(itemInput)
+	if errBind != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "error bind data. data not valid", nil))
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(itemInput); err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, err.Error(), nil))
+	}
+
+	itemCore := ItemUpdateRequestToCore(*itemInput)
+	result, err := handler.itemService.Update(uint(idItem), itemCore)
+	if err != nil {
+		if strings.Contains(err.Error(), "validation") {
+			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, err.Error(), nil))
+		}
+		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "error insert data", nil))
+	}
+
+	updateResponse := ItemResponse{
+		Name:             result.Name,
+		Stock:            result.Stock,
+		Rent_Price:       result.Rent_Price,
+		Image:            result.Image,
+		Description_Item: result.Description_Item,
+		Broke_Cost:       result.Broke_Cost,
+		Lost_Cost:        result.Lost_Cost,
+	}
+
+	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success update data", updateResponse))
 }
