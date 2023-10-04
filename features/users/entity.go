@@ -1,16 +1,22 @@
 package users
 
+import (
+	"mime/multipart"
+	"time"
+)
+
 type UserCore struct {
 	ID           uint
 	Name         string
-	UserName     string
 	Email        string
 	PhoneNumber  string
 	Password     string
 	Address      string
 	ProfilePhoto string
 	UploadKTP    string
-	Membership   bool
+	Role         string
+	CreatedAt    time.Time
+	DeletedAt    time.Time
 }
 
 type Login struct {
@@ -20,14 +26,14 @@ type Login struct {
 
 type UserDataInterface interface {
 	Login(email, password string) (UserCore, error)
-	Insert(input UserCore) error
+	Insert(input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
 	SelectById(id uint) (UserCore, error)
 	Delete(id uint) error
 }
 
 type UserServiceInterface interface {
 	Login(email, password string) (UserCore, string, error)
-	Add(input UserCore) error
+	Add(input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
 	GetUserById(id uint) (UserCore, error)
 	Deletebyid(id uint) error
 }

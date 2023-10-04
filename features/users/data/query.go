@@ -4,6 +4,7 @@ import (
 	"Hannon-app/features/users"
 	"Hannon-app/helpers"
 	"errors"
+	"mime/multipart"
 
 	"gorm.io/gorm"
 )
@@ -11,6 +12,57 @@ import (
 type UserQuery struct {
 	db        *gorm.DB
 	dataLogin users.UserCore
+}
+
+// Insert implements users.UserDataInterface
+func (repo *UserQuery) Insert(input users.UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
+	var userModel = UserCoreToModel(input)
+
+	hash, errHass := helpers.HashPassword(userModel.Password)
+	if errHass != nil {
+		return errHass
+	}
+	userModel.Password = hash
+
+	if filenameImages == "default.png" {
+		userModel.ProfilePhoto = filenameImages
+	} else {
+		nameGen, errGen := helpers.GenerateName()
+		if errGen != nil {
+			return errGen
+		}
+		userModel.ProfilePhoto = nameGen + filenameImages
+		errUp := helpers.Uploader.UploadFile(fileImages, userModel.ProfilePhoto)
+
+		if errUp != nil {
+			return errUp
+		}
+	}
+
+	if filenameID == "default.png" {
+		userModel.UploadKTP = filenameID
+	} else {
+		nameGen, errGen := helpers.GenerateName()
+		if errGen != nil {
+			return errGen
+		}
+		userModel.UploadKTP = nameGen + filenameID
+		errUp := helpers.Uploader.UploadFile(fileID, userModel.UploadKTP)
+
+		if errUp != nil {
+			return errUp
+		}
+	}
+
+	tx := repo.db.Create(&userModel)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return errors.New("no row affected")
+	}
+
+	return nil
 }
 
 // Delete implements users.UserDataInterface
@@ -47,26 +99,6 @@ func (repo *UserQuery) SelectById(id uint) (users.UserCore, error) {
 
 	resultCore := ModelToUserCore(result)
 	return resultCore, nil
-}
-
-// Insert implements users.UserDataInterface
-func (repo *UserQuery) Insert(input users.UserCore) error {
-	inputModel := UserCoreToModel(input)
-
-	hass, errHass := helpers.HashPassword(inputModel.Password)
-	if errHass != nil {
-		return errHass
-	}
-	inputModel.Password = hass
-
-	tx := repo.db.Create(&inputModel)
-	if tx.Error != nil {
-		return tx.Error
-	}
-	if tx.RowsAffected == 0 {
-		return errors.New("row not affected")
-	}
-	return nil
 }
 
 func New(db *gorm.DB) users.UserDataInterface {
