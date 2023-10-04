@@ -38,25 +38,35 @@ func (handler *UserHandler) Login(c echo.Context) error {
 	}
 	var response = LoginResponse{
 		ID:    dataLogin.ID,
+		Role:  dataLogin.Role,
+		Name:  dataLogin.Name,
 		Token: token,
 	}
 	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success login", response))
 }
 
 func (handler *UserHandler) AddUser(c echo.Context) error {
-	profilePhotoURL, ktpPhotoURL, _ := helpers.UploadImage(c)
 
-	var input UserRequest
-	errBind := c.Bind(&input)
+	var userInput UserRequest
+	errBind := c.Bind(&userInput)
 	if errBind != nil {
-		return helpers.FailedNotFound(c, "error binding", nil)
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid"+errBind.Error(), nil))
 	}
+	// Handling image upload
+	imageFile, imageHeader, errImageFile := c.Request().FormFile("profil_photo")
+	if errImageFile != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "Error reading image file: "+errImageFile.Error(), nil))
+	}
+	imageName := strings.ReplaceAll(imageHeader.Filename, " ", "_")
 
-	entity := RequestToCore(input)
-	entity.ProfilePhoto = profilePhotoURL
-	entity.UploadKTP = ktpPhotoURL
-
-	err := handler.userService.Add(entity)
+	// Handling ID card upload
+	idCardFile, idCardHeader, errIDCardFile := c.Request().FormFile("ktp_photo")
+	if errIDCardFile != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "Error reading ID card file: "+errIDCardFile.Error(), nil))
+	}
+	idCardName := strings.ReplaceAll(idCardHeader.Filename, " ", "_")
+	var userCore = RequestToCore(userInput)
+	err := handler.userService.Add(userCore, imageFile, idCardFile, imageName, idCardName)
 	if err != nil {
 		if strings.Contains(err.Error(), "validation") {
 			return helpers.FailedRequest(c, err.Error(), nil)
