@@ -23,7 +23,7 @@ type TenantCore struct {
 
 type TenantDataInterface interface {
 	Login(email string, password string) (dataLogin TenantCore, err error)
-	Register(input TenantCore, file multipart.File, filename string) error
+	Register(input TenantCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
 	GetAll() ([]TenantCore, error)
 	Update(input TenantCore) error
 	Delete(id uint) error
@@ -31,7 +31,7 @@ type TenantDataInterface interface {
 
 type TenantServiceInterface interface {
 	Login(email string, password string) (dataLogin TenantCore, token string, err error)
-	Create(input TenantCore, file multipart.File, filename string) error
+	Create(input TenantCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
 	ReadAll() ([]TenantCore, error)
 	Edit(input TenantCore) error
 	Remove(id uint) error

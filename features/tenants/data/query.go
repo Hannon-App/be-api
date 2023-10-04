@@ -30,7 +30,7 @@ func (*TenantQuery) Login(email string, password string) (dataLogin tenants.Tena
 }
 
 // Register implements tenants.TenantDataInterface.
-func (repo *TenantQuery) Register(input tenants.TenantCore, file multipart.File, filename string) error {
+func (repo *TenantQuery) Register(input tenants.TenantCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
 	var tenantModel = TenantCoreToModel(input)
 
 	hash, errHass := helpers.HashPassword(tenantModel.Password)
@@ -39,15 +39,30 @@ func (repo *TenantQuery) Register(input tenants.TenantCore, file multipart.File,
 	}
 	tenantModel.Password = hash
 
-	if filename == "default.png" {
-		tenantModel.Images = filename
+	if filenameImages == "default.png" {
+		tenantModel.Images = filenameImages
 	} else {
 		nameGen, errGen := helpers.GenerateName()
 		if errGen != nil {
 			return errGen
 		}
-		tenantModel.Images = nameGen + filename
-		errUp := helpers.Uploader.UploadFile(file, tenantModel.Images)
+		tenantModel.Images = nameGen + filenameImages
+		errUp := helpers.Uploader.UploadFile(fileImages, tenantModel.Images)
+
+		if errUp != nil {
+			return errUp
+		}
+	}
+
+	if filenameID == "default.png" {
+		tenantModel.IDcard = filenameID
+	} else {
+		nameGen, errGen := helpers.GenerateName()
+		if errGen != nil {
+			return errGen
+		}
+		tenantModel.IDcard = nameGen + filenameID
+		errUp := helpers.Uploader.UploadFile(fileID, tenantModel.IDcard)
 
 		if errUp != nil {
 			return errUp
