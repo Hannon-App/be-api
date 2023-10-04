@@ -4,6 +4,8 @@ import "Hannon-app/features/users"
 
 type LoginResponse struct {
 	ID    uint   `json:"id,omitempty"`
+	Name  string `json:"name,omitempty"`
+	Role  string `json:"role,omitempty"`
 	Token string `json:"token,omitempty"`
 }
 
@@ -16,6 +18,7 @@ type UserResponse struct {
 	Address      string `json:"address,omitempty"`
 	ProfilePhoto string `json:"profil_photo,omitempty"`
 	UploadKTP    string `json:"image,omitempty"`
+	MembershipID uint   `json:"membership_id,omitempty"`
 }
 
 func UserCoreToResponse(input users.UserCore) UserResponse {
@@ -28,5 +31,6 @@ func UserCoreToResponse(input users.UserCore) UserResponse {
 		Address:      input.Address,
 		ProfilePhoto: input.ProfilePhoto,
 		UploadKTP:    input.UploadKTP,
+		MembershipID: input.MembershipID,
 	}
 }

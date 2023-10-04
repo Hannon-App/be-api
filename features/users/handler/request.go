@@ -10,6 +10,7 @@ type UserRequest struct {
 	Address      string `json:"address" form:"address"`
 	ProfilePhoto string `json:"profil_photo" form:"profil_photo"`
 	UploadKTP    string `json:"ktp_photo" form:"ktp_photo"`
+	MembershipID uint   `json:"membership_id" form:"membership_id"`
 }
 
 type LoginRequest struct {
@@ -32,5 +33,6 @@ func RequestToCore(user UserRequest) users.UserCore {
 		Address:      user.Address,
 		ProfilePhoto: user.ProfilePhoto,
 		UploadKTP:    user.UploadKTP,
+		MembershipID: user.MembershipID,
 	}
 }

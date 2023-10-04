@@ -58,7 +58,10 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	c.GET("/items", ItemHandlerAPI.GetAll)
 	c.DELETE("/items/:item_id", ItemHandlerAPI.DeleteItem)
 	c.GET("/items/:item_id", ItemHandlerAPI.GetItemByID)
+<<<<<<< HEAD
 
+=======
+>>>>>>> c6eaa240b586666dbf6bd077f6f7e0ee8e231dfa
 	c.POST("/items", ItemHandlerAPI.CreateItem)
 	c.PUT("/items/:item_id", ItemHandlerAPI.UpdateItemByID)
 
