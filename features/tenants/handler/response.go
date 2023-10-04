@@ -1,6 +1,6 @@
 package handler
 
-type LoginResponse struct {
+type TenantLoginResponse struct {
 	ID    uint   `json:"id"`
 	Name  string `json:"name"`
 	Role  string `json:"role"`

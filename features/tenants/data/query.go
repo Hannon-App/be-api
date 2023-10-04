@@ -10,8 +10,8 @@ import (
 )
 
 type TenantQuery struct {
-	db *gorm.DB
-	// dataLogin tenants.TenantCore
+	db        *gorm.DB
+	dataLogin tenants.TenantCore
 }
 
 // Delete implements tenants.TenantDataInterface.
@@ -25,8 +25,22 @@ func (*TenantQuery) GetAll() ([]tenants.TenantCore, error) {
 }
 
 // Login implements tenants.TenantDataInterface.
-func (*TenantQuery) Login(email string, password string) (dataLogin tenants.TenantCore, err error) {
-	panic("unimplemented")
+func (repo *TenantQuery) Login(email string, password string) (dataLogin tenants.TenantCore, err error) {
+	var data Tenant
+	tx := repo.db.Where("email = ?", email).Find(&data)
+	if tx.Error != nil {
+		return tenants.TenantCore{}, tx.Error
+	}
+	check := helpers.CheckPassword(password, data.Password)
+	if !check {
+		return tenants.TenantCore{}, errors.New("password incorect")
+	}
+	if tx.RowsAffected == 0 {
+		return tenants.TenantCore{}, errors.New("no row affected")
+	}
+	dataLogin = TenantModelToCore(data)
+	repo.dataLogin = dataLogin
+	return dataLogin, nil
 }
 
 // Register implements tenants.TenantDataInterface.

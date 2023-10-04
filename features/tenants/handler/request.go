@@ -30,3 +30,8 @@ func TenantRequestToCore(input TenantRequest) tenants.TenantCore {
 	}
 	return TenantCore
 }
+
+type TenantLogin struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
