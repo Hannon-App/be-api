@@ -1,6 +1,7 @@
 package service
 
 import (
+	"Hannon-app/app/middlewares"
 	"Hannon-app/features/tenants"
 	"mime/multipart"
 )
@@ -21,8 +22,17 @@ func (*TenantService) Edit(input tenants.TenantCore) error {
 }
 
 // Login implements tenants.TenantServiceInterface.
-func (*TenantService) Login(email string, password string) (dataLogin tenants.TenantCore, token string, err error) {
-	panic("unimplemented")
+func (service *TenantService) Login(email string, password string) (dataLogin tenants.TenantCore, token string, err error) {
+	dataLogin, err = service.tenantData.Login(email, password)
+	if err != nil {
+		return tenants.TenantCore{}, "", err
+	}
+	token, err = middlewares.CreateToken(dataLogin.ID, dataLogin.ID, dataLogin.ID)
+	if err != nil {
+		return tenants.TenantCore{}, "", err
+	}
+	return dataLogin, token, nil
+
 }
 
 // ReadAll implements tenants.TenantServiceInterface.

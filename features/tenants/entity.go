@@ -13,6 +13,7 @@ type TenantCore struct {
 	Phone     string
 	Images    string
 	Address   string
+	Role      string
 	IDcard    string
 	OpenTime  string
 	CloseTime string
