@@ -16,6 +16,7 @@ type User struct {
 	ProfilePhoto string `gorm:"column:profile_photo"`
 	UploadKTP    string `gorm:"column:ktp_photo"`
 	Role         string `gorm:"default:user"`
+	MembershipID uint   `gorm:"membership_id"`
 }
 
 func UserCoreToModel(input users.UserCore) User {
@@ -29,6 +30,7 @@ func UserCoreToModel(input users.UserCore) User {
 		ProfilePhoto: input.ProfilePhoto,
 		UploadKTP:    input.UploadKTP,
 		Role:         input.Role,
+		MembershipID: input.MembershipID,
 	}
 }
 
@@ -43,5 +45,6 @@ func ModelToUserCore(input User) users.UserCore {
 		ProfilePhoto: input.ProfilePhoto,
 		UploadKTP:    input.UploadKTP,
 		Role:         input.Role,
+		MembershipID: input.MembershipID,
 	}
 }
