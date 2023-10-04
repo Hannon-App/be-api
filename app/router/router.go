@@ -41,8 +41,6 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	TenantService := _tenantService.New(TenantData)
 	TenantHandlerAPI := _tenantHandler.New(TenantService)
 
-
-
 	c.GET("/test", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "get test success", nil))
 	})
@@ -60,11 +58,8 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	c.GET("/items", ItemHandlerAPI.GetAll)
 	c.DELETE("/items/:item_id", ItemHandlerAPI.DeleteItem)
 	c.GET("/items/:item_id", ItemHandlerAPI.GetItemByID)
-
-
 	c.POST("/items", ItemHandlerAPI.CreateItem)
 	c.PUT("/items/:item_id", ItemHandlerAPI.UpdateItemByID)
-
 
 	//Admin
 	c.POST("/admin", AdminHandlerAPI.Login)
