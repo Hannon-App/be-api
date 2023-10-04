@@ -26,28 +26,22 @@ func (handler *TenantHandler) Insert(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid"+errBind.Error(), nil))
 	}
 
-	var fileName string
-	file, header, errFile := c.Request().FormFile("images")
-
-	if errFile != nil {
-		if strings.Contains(errFile.Error(), "no such file") {
-			fileName = "default.png"
-		} else {
-			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid "+errFile.Error(), nil))
-		}
+	// Handling image upload
+	imageFile, imageHeader, errImageFile := c.Request().FormFile("images")
+	if errImageFile != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "Error reading image file: "+errImageFile.Error(), nil))
 	}
+	imageName := strings.ReplaceAll(imageHeader.Filename, " ", "_")
 
-	if fileName == "" {
-		fileName = strings.ReplaceAll(header.Filename, " ", "_")
+	// Handling ID card upload
+	idCardFile, idCardHeader, errIDCardFile := c.Request().FormFile("id_card")
+	if errIDCardFile != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "Error reading ID card file: "+errIDCardFile.Error(), nil))
 	}
+	idCardName := strings.ReplaceAll(idCardHeader.Filename, " ", "_")
 
-	// errUp := helper.Uploader.UploadFile(file, header.Filename)
-
-	// if errUp != nil {
-	// 	return c.JSON(http.StatusInternalServerError, helper.WebResponse(http.StatusInternalServerError, "operation failed, internal server error", nil))
-	// }
 	var tenantCore = TenantRequestToCore(userInput)
-	err := handler.tenantService.Create(tenantCore, file, fileName)
+	err := handler.tenantService.Create(tenantCore, imageFile, idCardFile, imageName, idCardName)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "operation failed, internal server error", nil))
 	}

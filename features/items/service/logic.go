@@ -2,13 +2,11 @@ package service
 
 import (
 	"Hannon-app/features/items"
-
-	"github.com/go-playground/validator"
+	"mime/multipart"
 )
 
 type ItemService struct {
 	itemData items.ItemDataInterface
-	validate *validator.Validate
 }
 
 func New(repo items.ItemDataInterface) items.ItemServiceInterface {
@@ -44,13 +42,13 @@ func (service *ItemService) GetById(id uint) (items.ItemCore, error) {
 	return service.itemData.SelectById(id)
 }
 
-func (service *ItemService) Create(input items.ItemCore) (items.ItemCore, error) {
+func (service *ItemService) Create(input items.ItemCore, file multipart.File, filename string) error {
 
-	result, err := service.itemData.Insert(input)
+	err := service.itemData.Insert(input, file, filename)
 	if err != nil {
-		return items.ItemCore{}, err
+		return err
 	}
-	return result, err
+	return err
 }
 
 func (service *ItemService) Update(id uint, input items.ItemCore) (items.ItemCore, error) {

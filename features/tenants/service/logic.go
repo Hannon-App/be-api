@@ -10,8 +10,8 @@ type TenantService struct {
 }
 
 // Create implements tenants.TenantServiceInterface.
-func (service *TenantService) Create(input tenants.TenantCore, file multipart.File, filename string) error {
-	err := service.tenantData.Register(input, file, filename)
+func (service *TenantService) Create(input tenants.TenantCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
+	err := service.tenantData.Register(input, fileImages, fileID, filenameImages, filenameID)
 	return err
 }
 
