@@ -4,6 +4,8 @@ import "Hannon-app/features/users"
 
 type LoginResponse struct {
 	ID    uint   `json:"id,omitempty"`
+	Name  string `json:"name,omitempty"`
+	Role  string `json:"role,omitempty"`
 	Token string `json:"token,omitempty"`
 }
 
