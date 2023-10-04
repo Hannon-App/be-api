@@ -15,6 +15,7 @@ type UserCore struct {
 	ProfilePhoto string
 	UploadKTP    string
 	Role         string
+	MembershipID uint
 	CreatedAt    time.Time
 	DeletedAt    time.Time
 }
