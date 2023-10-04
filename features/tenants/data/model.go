@@ -13,6 +13,7 @@ type Tenant struct {
 	Email     string
 	Password  string
 	Phone     string
+	Role      string `gorm:"default:tenant"`
 	Address   string
 	Images    string
 	IDcard    string
@@ -32,6 +33,7 @@ func TenantModelToCore(dataModel Tenant) tenants.TenantCore {
 		IDcard:    dataModel.IDcard,
 		OpenTime:  dataModel.OpenTime,
 		CloseTime: dataModel.CloseTime,
+		Role:      dataModel.Role,
 		CreatedAt: time.Time{},
 		UpdatedAt: time.Time{},
 		DeletedAt: time.Time{},
@@ -45,6 +47,7 @@ func TenantCoreToModel(dataCore tenants.TenantCore) Tenant {
 		Name:      dataCore.Name,
 		Email:     dataCore.Email,
 		Password:  dataCore.Password,
+		Role:      dataCore.Role,
 		Phone:     dataCore.Phone,
 		Address:   dataCore.Address,
 		Images:    dataCore.Images,

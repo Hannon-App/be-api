@@ -58,6 +58,7 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	c.GET("/items", ItemHandlerAPI.GetAll)
 	c.DELETE("/items/:item_id", ItemHandlerAPI.DeleteItem)
 	c.GET("/items/:item_id", ItemHandlerAPI.GetItemByID)
+
 	c.POST("/items", ItemHandlerAPI.CreateItem)
 	c.PUT("/items/:item_id", ItemHandlerAPI.UpdateItemByID)
 
@@ -66,5 +67,6 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 
 	//Tenant
 	c.POST("/tenant", TenantHandlerAPI.Insert)
+	c.POST("/tenant/login", TenantHandlerAPI.Login)
 
 }
