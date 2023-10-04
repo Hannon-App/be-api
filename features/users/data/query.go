@@ -14,6 +14,65 @@ type UserQuery struct {
 	dataLogin users.UserCore
 }
 
+// UpdateUser implements users.UserDataInterface
+func (repo *UserQuery) UpdateUser(id uint, input users.UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
+	var user User
+	tx := repo.db.Where("id = ?", id).First(&user)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return errors.New("target not found")
+	}
+
+	// Mapping Entity Target to Model
+	updatedUser := UserCoreToModel(input)
+
+	// Hash the password
+	hashedPassword, err := helpers.HashPassword(updatedUser.Password)
+	if err != nil {
+		return err
+	}
+	updatedUser.Password = hashedPassword
+
+	// Check if profil photo file is provided
+	if filenameImages != "default.png" {
+		nameGen, errGen := helpers.GenerateName()
+		if errGen != nil {
+			return errGen
+		}
+		updatedUser.ProfilePhoto = nameGen + filenameImages
+
+		// Upload and replace the profil photo
+		errUp := helpers.Uploader.UploadFile(fileImages, updatedUser.ProfilePhoto)
+		if errUp != nil {
+			return errUp
+		}
+	}
+
+	// Check if KTP photo file is provided
+	if filenameID != "default.png" {
+		nameGen, errGen := helpers.GenerateName()
+		if errGen != nil {
+			return errGen
+		}
+		updatedUser.UploadKTP = nameGen + filenameID
+
+		// Upload and replace the KTP photo
+		errUp := helpers.Uploader.UploadFile(fileID, updatedUser.UploadKTP)
+		if errUp != nil {
+			return errUp
+		}
+	}
+
+	// Perform the update of user data in the database
+	tx = repo.db.Model(&user).Updates(updatedUser)
+	if tx.Error != nil {
+		return errors.New(tx.Error.Error() + " failed to update data")
+	}
+	return nil
+}
+
 // Insert implements users.UserDataInterface
 func (repo *UserQuery) Insert(input users.UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
 	var userModel = UserCoreToModel(input)

@@ -30,6 +30,7 @@ type UserDataInterface interface {
 	Insert(input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
 	SelectById(id uint) (UserCore, error)
 	Delete(id uint) error
+	UpdateUser(id uint, input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
 }
 
 type UserServiceInterface interface {
@@ -37,4 +38,5 @@ type UserServiceInterface interface {
 	Add(input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
 	GetUserById(id uint) (UserCore, error)
 	Deletebyid(id uint) error
+	Update(id uint, input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
 }
