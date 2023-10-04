@@ -85,6 +85,11 @@ func (repo *UserQuery) Login(email string, password string) (dataLogin users.Use
 		return users.UserCore{}, tx.Error
 	}
 
+	check := helpers.CheckPassword(password, data.Password)
+	if !check {
+		return users.UserCore{}, errors.New("password incorect")
+	}
+
 	if tx.RowsAffected == 0 {
 		return users.UserCore{}, errors.New("no row affected")
 	}
