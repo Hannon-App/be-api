@@ -185,5 +185,5 @@ func (handler *ItemHandler) UpdateItemByID(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "error updating item: "+err.Error(), nil))
 	}
 
-	return c.JSON(http.StatusCreated, helpers.WebResponse(http.StatusCreated, "success insert data", nil))
+	return c.JSON(http.StatusCreated, helpers.WebResponse(http.StatusCreated, "success update data", nil))
 }
