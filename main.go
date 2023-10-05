@@ -26,5 +26,5 @@ func main() {
 
 	router.InitRouter(dbMysql, e)
 	//start server and port
-	e.Logger.Fatal(e.Start(":80"))
+	e.Logger.Fatal(e.Start(":443"))
 }
