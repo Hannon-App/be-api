@@ -10,15 +10,21 @@ type LoginResponse struct {
 }
 
 type UserResponse struct {
-	ID           uint   `json:"id,omitempty"`
-	Name         string `json:"name,omitempty"`
-	Email        string `json:"email,omitempty"`
-	PhoneNumber  string `json:"phone_number,omitempty"`
-	Password     string `json:"password,omitempty"`
-	Address      string `json:"address,omitempty"`
-	ProfilePhoto string `json:"profil_photo,omitempty"`
-	UploadKTP    string `json:"image,omitempty"`
-	MembershipID uint   `json:"membership_id,omitempty"`
+	ID           uint               `json:"id,omitempty"`
+	Name         string             `json:"name,omitempty"`
+	Email        string             `json:"email,omitempty"`
+	PhoneNumber  string             `json:"phone_number,omitempty"`
+	Password     string             `json:"password,omitempty"`
+	Address      string             `json:"address,omitempty"`
+	ProfilePhoto string             `json:"profil_photo,omitempty"`
+	UploadKTP    string             `json:"image,omitempty"`
+	MembershipID uint               `json:"membership_id,omitempty"`
+	Membership   MembershipResponse `json:"membership,omitempty"`
+}
+
+type MembershipResponse struct {
+	JenisMembership string `json:"jenis_membership"`
+	Status          string `json:"status"`
 }
 
 func UserCoreToResponse(input users.UserCore) UserResponse {
@@ -32,5 +38,13 @@ func UserCoreToResponse(input users.UserCore) UserResponse {
 		ProfilePhoto: input.ProfilePhoto,
 		UploadKTP:    input.UploadKTP,
 		MembershipID: input.MembershipID,
+		Membership:   MembershipToResponse(input.Membership),
+	}
+}
+
+func MembershipToResponse(input users.MembershipCore) MembershipResponse {
+	return MembershipResponse{
+		JenisMembership: input.JenisMembership,
+		Status:          input.Status,
 	}
 }

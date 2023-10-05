@@ -14,6 +14,31 @@ type UserQuery struct {
 	dataLogin users.UserCore
 }
 
+// ReadAll implements users.UserDataInterface
+func (repo *UserQuery) ReadAll(page uint, userPerPage uint, searchName string) ([]users.UserCore, int64, error) {
+	var userData []User
+	var totalCount int64
+
+	query := repo.db
+	if searchName != "" {
+		query = query.Where("name LIKE ?", "%"+searchName+"%")
+	}
+
+	query.Find(&userData)
+
+	var userCore []users.UserCore
+	for _, value := range userData {
+		userCore = append(userCore, ModelToUserCore(value))
+	}
+
+	// Hitung total jumlah user yang sesuai dengan kriteria pencarian
+	if err := query.Model(&User{}).Count(&totalCount).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return userCore, totalCount, nil
+}
+
 // UpdateUser implements users.UserDataInterface
 func (repo *UserQuery) UpdateUser(id uint, input users.UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
 	var user User
