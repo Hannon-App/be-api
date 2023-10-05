@@ -7,6 +7,7 @@ type TenantLoginResponse struct {
 	Token string `json:"token"`
 }
 
+
 type TenantResponse struct {
 	ID        uint   `json:"id"`
 	Name      string `json:"name"`

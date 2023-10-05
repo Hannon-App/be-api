@@ -118,3 +118,45 @@ func (handler *UserHandler) DeleteUser(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "User Deleted successfully", nil))
 }
+
+func (handler *UserHandler) UpdateUser(c echo.Context) error {
+	var userInput UserRequest
+	id := c.Param("user_id")
+
+	userID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "invalid user ID", nil))
+	}
+
+	// Parse and validate the updated user data from the request body.
+	if err := c.Bind(&userInput); err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "error binding data", nil))
+	}
+
+	// Handling image upload
+	imageFile, imageHeader, errImageFile := c.Request().FormFile("profil_photo")
+	if errImageFile != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "Error reading image file: "+errImageFile.Error(), nil))
+	}
+	imageName := strings.ReplaceAll(imageHeader.Filename, " ", "_")
+
+	// Handling ID card upload
+	idCardFile, idCardHeader, errIDCardFile := c.Request().FormFile("ktp_photo")
+	if errIDCardFile != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "Error reading ID card file: "+errIDCardFile.Error(), nil))
+	}
+	idCardName := strings.ReplaceAll(idCardHeader.Filename, " ", "_")
+
+	// Create a CoreUser instance with the updated data.
+	updatedUser := RequestToCore(userInput)
+
+	// Call the UpdateUser method in the service layer to update the user.
+	if err := handler.userService.Update(uint(userID), updatedUser, imageFile, idCardFile, imageName, idCardName); err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			return c.JSON(http.StatusNotFound, helpers.WebResponse(http.StatusNotFound, "user not found", nil))
+		}
+		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "error updating user: "+err.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success updating user", nil))
+}
