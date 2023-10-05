@@ -19,22 +19,35 @@ func (repo *UserQuery) ReadAll(page uint, userPerPage uint, searchName string) (
 	var userData []User
 	var totalCount int64
 
-	query := repo.db
-	if searchName != "" {
-		query = query.Where("name LIKE ?", "%"+searchName+"%")
-	}
+	if page == 0 && userPerPage == 0 {
+		tx := repo.db
 
-	query.Find(&userData)
+		if searchName != "" {
+			tx = tx.Where("name LIKE ?", "%"+searchName+"%")
+		}
+		tx.Find(&userData)
+	} else {
+
+		offset := int((page - 1) * userPerPage)
+
+		query := repo.db.Offset(offset).Limit(int(userPerPage))
+
+		if searchName != "" {
+			query = query.Where("name LIKE ?", "%"+searchName+"%")
+		}
+
+		tx := query.Find(&userData)
+		if tx.Error != nil {
+			return nil, 0, tx.Error
+		}
+	}
 
 	var userCore []users.UserCore
 	for _, value := range userData {
 		userCore = append(userCore, ModelToUserCore(value))
 	}
 
-	// Hitung total jumlah user yang sesuai dengan kriteria pencarian
-	if err := query.Model(&User{}).Count(&totalCount).Error; err != nil {
-		return nil, 0, err
-	}
+	repo.db.Model(&User{}).Count(&totalCount)
 
 	return userCore, totalCount, nil
 }
