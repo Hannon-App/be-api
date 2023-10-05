@@ -14,4 +14,5 @@ var (
 	ErrDataNotFound    = constantError("data not found")
 	ErrBindData        = constantError("error bind data. data not valid")
 	ErrReadingFile     = constantError("error reading image file")
+	ErrReadData        = constantError("error read data")
 )
