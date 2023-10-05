@@ -1,9 +1,11 @@
 package handler
 
 import (
+	_item "Hannon-app/features/items"
 	"Hannon-app/features/tenants"
 	"Hannon-app/helpers"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -97,4 +99,43 @@ func (handler *TenantHandler) GetAllTenant(c echo.Context) error {
 		})
 	}
 	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success read data", data))
+}
+
+func (handler *TenantHandler) GetTenantItems(c echo.Context) error {
+	id := c.Param("tenant_id")
+	idParam, errConv := strconv.Atoi(id)
+	if errConv != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "error data id. data not valid", nil))
+	}
+
+	result, err := handler.tenantService.ReadAllTenantItems(uint(idParam))
+	if err != nil {
+		if strings.Contains(err.Error(), "validation") {
+			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, err.Error(), nil))
+		}
+	}
+	var tenantItems []TenantItemResponse
+	for _, tenant := range result {
+		var items []_item.ItemCore
+		for _, item := range tenant.Items {
+			items = append(items, _item.ItemCore{
+				ID:               item.ID,
+				Name:             item.Name,
+				Stock:            item.Stock,
+				Rent_Price:       item.Rent_Price,
+				Image:            item.Image,
+				Description_Item: item.Description_Item,
+				Broke_Cost:       item.Broke_Cost,
+				Lost_Cost:        item.Lost_Cost,
+			})
+		}
+		tenantItems = append(tenantItems, TenantItemResponse{
+			ID:     tenant.ID,
+			Name:   tenant.Name,
+			Images: tenant.Images,
+			Items:  items,
+		})
+	}
+	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success read data", tenantItems))
+
 }

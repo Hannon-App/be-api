@@ -11,6 +11,7 @@ type Item struct {
 	Description_Item string `gorm:"description_item;not null"`
 	Broke_Cost       uint   `gorm:"broke_cost;not null"`
 	Lost_Cost        uint   `gorm:"lost_cost;not null"`
+	TenantID         uint
 }
 
 func ItemCoreToModel(input items.ItemCore) Item {
