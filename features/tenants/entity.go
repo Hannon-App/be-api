@@ -29,6 +29,7 @@ type TenantDataInterface interface {
 	Register(input TenantCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
 	GetAll(addressFilter string) ([]TenantCore, error)
 	GetAllTenantItems(id uint) ([]TenantCore, error)
+	GetTenantById(id uint) (TenantCore, error)
 	Update(input TenantCore) error
 	Delete(id uint) error
 }
@@ -38,6 +39,7 @@ type TenantServiceInterface interface {
 	Create(input TenantCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
 	ReadAll(addressFilter string) ([]TenantCore, error)
 	ReadAllTenantItems(id uint) ([]TenantCore, error)
+	ReadTenantById(id uint) (TenantCore, error)
 	Edit(input TenantCore) error
 	Remove(id uint) error
 }

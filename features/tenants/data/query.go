@@ -16,6 +16,21 @@ type TenantQuery struct {
 	dataLogin tenants.TenantCore
 }
 
+// GetTenantById implements tenants.TenantDataInterface.
+func (repo *TenantQuery) GetTenantById(id uint) (tenants.TenantCore, error) {
+	var data Tenant
+	tx := repo.db.Where("id = ?", id).First(&data)
+	if tx.Error != nil {
+		return tenants.TenantCore{}, tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return tenants.TenantCore{}, errors.New("data not found")
+	}
+
+	resultCore := TenantModelToCore(data)
+	return resultCore, nil
+}
+
 // GetAllTenantItems implements tenants.TenantDataInterface.
 func (repo *TenantQuery) GetAllTenantItems(id uint) ([]tenants.TenantCore, error) {
 	var tenantData []Tenant
@@ -68,8 +83,13 @@ func (repo *TenantQuery) GetAllTenantItems(id uint) ([]tenants.TenantCore, error
 }
 
 // Delete implements tenants.TenantDataInterface.
-func (*TenantQuery) Delete(id uint) error {
-	panic("unimplemented")
+func (repo *TenantQuery) Delete(id uint) error {
+	var data Tenant
+	tx := repo.db.Where("id = ?", id).Delete(&data)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	return nil
 }
 
 // GetAll implements tenants.TenantDataInterface.

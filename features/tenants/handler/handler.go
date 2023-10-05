@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"Hannon-app/app/middlewares"
 	_item "Hannon-app/features/items"
 	"Hannon-app/features/tenants"
 	"Hannon-app/helpers"
@@ -85,7 +86,7 @@ func (handler *TenantHandler) GetAllTenant(c echo.Context) error {
 	var data []TenantResponse
 	for _, value := range result {
 		if addressFilter != "" && value.Address != addressFilter {
-			continue // Skip this entry if the address doesn't match the filter
+			continue
 		}
 		data = append(data, TenantResponse{
 			ID:        value.ID,
@@ -105,7 +106,7 @@ func (handler *TenantHandler) GetTenantItems(c echo.Context) error {
 	id := c.Param("tenant_id")
 	idParam, errConv := strconv.Atoi(id)
 	if errConv != nil {
-		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "error data id. data not valid", nil))
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, helpers.ErrBadRequest.Error(), nil))
 	}
 
 	result, err := handler.tenantService.ReadAllTenantItems(uint(idParam))
@@ -136,6 +137,50 @@ func (handler *TenantHandler) GetTenantItems(c echo.Context) error {
 			Items:  items,
 		})
 	}
-	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success read data", tenantItems))
+	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success read tenant items data", tenantItems))
+
+}
+
+func (handler *TenantHandler) DeleteTenant(c echo.Context) error {
+	id := c.Param("tenant_id")
+	idParam, errConv := strconv.Atoi(id)
+	if errConv != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, helpers.ErrBadRequest.Error(), nil))
+	}
+	admin := middlewares.ExtractTokenAdminId(c)
+	if admin != 1 {
+		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, helpers.ErrForbiddenAccess.Error(), nil))
+	}
+	err := handler.tenantService.Remove(uint(idParam))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, helpers.ErrInternalServer.Error(), nil))
+	}
+
+	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "Delete Tenant Successfully", nil))
+}
+
+func (handler *TenantHandler) GetTenantById(c echo.Context) error {
+	id := c.Param("tenant_id")
+	idParam, errConv := strconv.Atoi(id)
+	if errConv != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, helpers.ErrBadRequest.Error(), nil))
+	}
+	result, err := handler.tenantService.ReadTenantById(uint(idParam))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, helpers.ErrInternalServer.Error(), nil))
+	}
+
+	resultResponse := TenantResponse{
+		ID:        result.ID,
+		Name:      result.Name,
+		Address:   result.Address,
+		Email:     result.Email,
+		Phone:     result.Phone,
+		Images:    result.Images,
+		OpenTime:  result.OpenTime,
+		CloseTime: result.CloseTime,
+	}
+
+	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success read tenant data", resultResponse))
 
 }
