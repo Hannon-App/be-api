@@ -36,8 +36,9 @@ func (service *TenantService) Login(email string, password string) (dataLogin te
 }
 
 // ReadAll implements tenants.TenantServiceInterface.
-func (*TenantService) ReadAll() ([]tenants.TenantCore, error) {
-	panic("unimplemented")
+func (service *TenantService) ReadAll(addressFilter string) ([]tenants.TenantCore, error) {
+	results, err := service.tenantData.GetAll(addressFilter)
+	return results, err
 }
 
 // Remove implements tenants.TenantServiceInterface.

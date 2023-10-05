@@ -5,6 +5,7 @@ import (
 	"Hannon-app/helpers"
 	"errors"
 	"mime/multipart"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -20,8 +21,35 @@ func (*TenantQuery) Delete(id uint) error {
 }
 
 // GetAll implements tenants.TenantDataInterface.
-func (*TenantQuery) GetAll() ([]tenants.TenantCore, error) {
-	panic("unimplemented")
+func (repo *TenantQuery) GetAll(addressFilter string) ([]tenants.TenantCore, error) {
+	var data []Tenant
+	tx := repo.db.Find(&data)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	var TenantCore []tenants.TenantCore
+	for _, value := range data {
+		if addressFilter != "" && value.Address != addressFilter {
+			continue // Skip this entry if the address doesn't match the filter
+		}
+		TenantCore = append(TenantCore, tenants.TenantCore{
+			ID:        value.ID,
+			Name:      value.Name,
+			Email:     value.Email,
+			Password:  value.Password,
+			Phone:     value.Phone,
+			Images:    value.Images,
+			Address:   value.Address,
+			Role:      value.Role,
+			IDcard:    value.IDcard,
+			OpenTime:  value.OpenTime,
+			CloseTime: value.CloseTime,
+			CreatedAt: time.Time{},
+			UpdatedAt: time.Time{},
+			DeletedAt: time.Time{},
+		})
+	}
+	return TenantCore, nil
 }
 
 // Login implements tenants.TenantDataInterface.
