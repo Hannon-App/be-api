@@ -25,13 +25,13 @@ func RequestToCore(input ItemRequest) items.ItemCore {
 }
 
 type ItemUpdateRequest struct {
-	Name             string `json:"name"`
-	Stock            uint   `json:"stock"`
-	Rent_Price       uint   `json:"rent_price"`
-	Image            string `json:"image"`
-	Description_Item string `json:"description_item"`
-	Broke_Cost       uint   `json:"broke_cost"`
-	Lost_Cost        uint   `json:"lost_cost"`
+	Name             string `json:"name" form:"name"`
+	Stock            uint   `json:"stock" form:"stock"`
+	Rent_Price       uint   `json:"rent_price" form:"rent_price"`
+	Image            string `json:"image" form:"image"`
+	Description_Item string `json:"description_item" form:"description_item"`
+	Broke_Cost       uint   `json:"broke_cost" form:"broke_cost"`
+	Lost_Cost        uint   `json:"lost_cost" form:"lost_cost"`
 }
 
 func ItemUpdateRequestToCore(input ItemUpdateRequest) items.ItemCore {

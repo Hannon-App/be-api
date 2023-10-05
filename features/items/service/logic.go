@@ -34,8 +34,8 @@ func (service *ItemService) GetAllItem(page, item uint, search_name string) ([]i
 }
 
 func (service *ItemService) Delete(id uint) error {
-	err := service.itemData.Delete(id)
-	return err
+	return service.itemData.Delete(id)
+
 }
 
 func (service *ItemService) GetById(id uint) (items.ItemCore, error) {
@@ -43,18 +43,9 @@ func (service *ItemService) GetById(id uint) (items.ItemCore, error) {
 }
 
 func (service *ItemService) Create(input items.ItemCore, file multipart.File, filename string) error {
-
-	err := service.itemData.Insert(input, file, filename)
-	if err != nil {
-		return err
-	}
-	return err
+	return service.itemData.Insert(input, file, filename)
 }
 
-func (service *ItemService) Update(id uint, input items.ItemCore) (items.ItemCore, error) {
-	result, err := service.itemData.UpdateDataItem(id, input)
-	if err != nil {
-		return items.ItemCore{}, err
-	}
-	return result, nil
+func (service *ItemService) Update(id uint, input items.ItemCore, file multipart.File, filename string) error {
+	return service.itemData.UpdateDataItem(id, input, file, filename)
 }

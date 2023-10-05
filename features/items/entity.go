@@ -18,7 +18,7 @@ type ItemDataInterface interface {
 	Delete(id uint) error
 	SelectById(id uint) (ItemCore, error)
 	Insert(input ItemCore, file multipart.File, filename string) error
-	UpdateDataItem(id uint, input ItemCore) (ItemCore, error)
+	UpdateDataItem(id uint, input ItemCore, file multipart.File, filename string) error
 }
 
 type ItemServiceInterface interface {
@@ -26,5 +26,5 @@ type ItemServiceInterface interface {
 	Delete(id uint) error
 	GetById(id uint) (ItemCore, error)
 	Create(input ItemCore, file multipart.File, filename string) error
-	Update(id uint, input ItemCore) (ItemCore, error)
+	Update(id uint, input ItemCore, file multipart.File, filename string) error
 }
