@@ -72,3 +72,29 @@ func (handler *TenantHandler) Login(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success login", response))
 }
+
+func (handler *TenantHandler) GetAllTenant(c echo.Context) error {
+	addressFilter := c.QueryParam("location")
+
+	result, err := handler.tenantService.ReadAll(addressFilter)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, helpers.ErrReadData.Error(), nil))
+	}
+	var data []TenantResponse
+	for _, value := range result {
+		if addressFilter != "" && value.Address != addressFilter {
+			continue // Skip this entry if the address doesn't match the filter
+		}
+		data = append(data, TenantResponse{
+			ID:        value.ID,
+			Name:      value.Name,
+			Address:   value.Address,
+			Email:     value.Email,
+			Phone:     value.Phone,
+			Images:    value.Images,
+			OpenTime:  value.OpenTime,
+			CloseTime: value.CloseTime,
+		})
+	}
+	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success read data", data))
+}
