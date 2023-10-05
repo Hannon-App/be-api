@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 )
 
@@ -65,6 +66,11 @@ func (handler *UserHandler) AddUser(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "Error reading ID card file: "+errIDCardFile.Error(), nil))
 	}
 	idCardName := strings.ReplaceAll(idCardHeader.Filename, " ", "_")
+
+	validate := validator.New()
+	if err := validate.Struct(userInput); err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, err.Error(), nil))
+	}
 	var userCore = RequestToCore(userInput)
 	err := handler.userService.Add(userCore, imageFile, idCardFile, imageName, idCardName)
 	if err != nil {
