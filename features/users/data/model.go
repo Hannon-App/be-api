@@ -19,6 +19,25 @@ type User struct {
 	MembershipID uint   `gorm:"membership_id"`
 }
 
+type UserPengguna struct {
+	gorm.Model
+	Name         string
+	Email        string
+	PhoneNumber  string
+	Password     string
+	Address      string
+	ProfilePhoto string
+	UploadKTP    string
+	Role         string
+	MembershipID uint
+	Memberships  Memberships
+}
+
+type Memberships struct {
+	JenisMembership string `json:"jenis_membership"`
+	Status          string `json:"status"`
+}
+
 func UserCoreToModel(input users.UserCore) User {
 	return User{
 		Model:        gorm.Model{},
@@ -46,5 +65,28 @@ func ModelToUserCore(input User) users.UserCore {
 		UploadKTP:    input.UploadKTP,
 		Role:         input.Role,
 		MembershipID: input.MembershipID,
+	}
+}
+
+func ModelToUserPengguna(input UserPengguna) users.UserCore {
+	return users.UserCore{
+		ID:           input.ID,
+		Name:         input.Name,
+		Email:        input.Email,
+		PhoneNumber:  input.PhoneNumber,
+		Password:     input.Password,
+		Address:      input.Address,
+		ProfilePhoto: input.ProfilePhoto,
+		UploadKTP:    input.UploadKTP,
+		Role:         input.Role,
+		MembershipID: input.MembershipID,
+		Membership:   MembersipToUserCore(input.Memberships),
+	}
+}
+
+func MembersipToUserCore(input Memberships) users.MembershipCore {
+	return users.MembershipCore{
+		JenisMembership: input.JenisMembership,
+		Status:          input.Status,
 	}
 }

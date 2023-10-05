@@ -3,11 +3,11 @@ package handler
 import "Hannon-app/features/users"
 
 type UserRequest struct {
-	Name         string `json:"name" form:"name"`
-	Email        string `json:"email" form:"email"`
-	PhoneNumber  string `json:"phone_number" form:"phone_number"`
-	Password     string `json:"password" form:"password"`
-	Address      string `json:"address" form:"address"`
+	Name         string `json:"name" form:"name" validate:"required"`
+	Email        string `json:"email" form:"email" validate:"required"`
+	PhoneNumber  string `json:"phone_number" form:"phone_number" validate:"required"`
+	Password     string `json:"password" form:"password" validate:"required"`
+	Address      string `json:"address" form:"address" validate:"required"`
 	ProfilePhoto string `json:"profil_photo" form:"profil_photo"`
 	UploadKTP    string `json:"ktp_photo" form:"ktp_photo"`
 	MembershipID uint   `json:"membership_id" form:"membership_id"`

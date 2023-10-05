@@ -14,6 +14,44 @@ type UserQuery struct {
 	dataLogin users.UserCore
 }
 
+// ReadAll implements users.UserDataInterface
+func (repo *UserQuery) ReadAll(page uint, userPerPage uint, searchName string) ([]users.UserCore, int64, error) {
+	var userData []User
+	var totalCount int64
+
+	if page == 0 && userPerPage == 0 {
+		tx := repo.db
+
+		if searchName != "" {
+			tx = tx.Where("name LIKE ?", "%"+searchName+"%")
+		}
+		tx.Find(&userData)
+	} else {
+
+		offset := int((page - 1) * userPerPage)
+
+		query := repo.db.Offset(offset).Limit(int(userPerPage))
+
+		if searchName != "" {
+			query = query.Where("name LIKE ?", "%"+searchName+"%")
+		}
+
+		tx := query.Find(&userData)
+		if tx.Error != nil {
+			return nil, 0, tx.Error
+		}
+	}
+
+	var userCore []users.UserCore
+	for _, value := range userData {
+		userCore = append(userCore, ModelToUserCore(value))
+	}
+
+	repo.db.Model(&User{}).Count(&totalCount)
+
+	return userCore, totalCount, nil
+}
+
 // UpdateUser implements users.UserDataInterface
 func (repo *UserQuery) UpdateUser(id uint, input users.UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
 	var user User
