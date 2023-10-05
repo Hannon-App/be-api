@@ -116,15 +116,34 @@ func (repo *ItemQuery) Insert(input items.ItemCore, file multipart.File, filenam
 	return nil
 }
 
-func (repo *ItemQuery) UpdateDataItem(id uint, input items.ItemCore) (items.ItemCore, error) {
-	itemGorm := ItemCoreToModel(input)
-	tx := repo.db.Model(&Item{}).Where("id = ?", id).Updates(itemGorm)
+func (repo *ItemQuery) UpdateDataItem(id uint, input items.ItemCore, file multipart.File, filename string) error {
+	var item Item
+	tx := repo.db.Where("id = ?", id).First(&item)
 	if tx.Error != nil {
-		return items.ItemCore{}, tx.Error
+		return tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return errors.New("target not found")
 	}
 
-	if tx.RowsAffected == 0 {
-		return items.ItemCore{}, errors.New("item not found")
+	updatedItem := ItemCoreToModel(input)
+
+	if filename != "default.png" {
+		nameGen, errGen := helpers.GenerateName()
+		if errGen != nil {
+			return errGen
+		}
+		updatedItem.Image = nameGen + filename
+
+		errUp := helpers.Uploader.UploadFile(file, updatedItem.Image)
+		if errUp != nil {
+			return errUp
+		}
 	}
-	return ModelToCore(itemGorm), nil
+
+	tx = repo.db.Model(&item).Updates(updatedItem)
+	if tx.Error != nil {
+		return errors.New(tx.Error.Error() + " failed to update data")
+	}
+	return nil
 }

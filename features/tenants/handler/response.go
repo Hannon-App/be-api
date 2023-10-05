@@ -1,5 +1,7 @@
 package handler
 
+import "Hannon-app/features/items"
+
 type TenantLoginResponse struct {
 	ID    uint   `json:"id"`
 	Name  string `json:"name"`
@@ -17,4 +19,11 @@ type TenantResponse struct {
 	Images    string `json:"images"`
 	OpenTime  string `json:"open_time"`
 	CloseTime string `json:"close_time"`
+}
+
+type TenantItemResponse struct {
+	ID     uint             `json:"id"`
+	Name   string           `json:"name"`
+	Images string           `json:"images"`
+	Items  []items.ItemCore `json:"items"`
 }

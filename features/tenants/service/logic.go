@@ -10,6 +10,18 @@ type TenantService struct {
 	tenantData tenants.TenantDataInterface
 }
 
+// ReadTenantById implements tenants.TenantServiceInterface.
+func (service *TenantService) ReadTenantById(id uint) (tenants.TenantCore, error) {
+	result, err := service.tenantData.GetTenantById(id)
+	return result, err
+}
+
+// ReadAllTenantItems implements tenants.TenantServiceInterface.
+func (service *TenantService) ReadAllTenantItems(id uint) ([]tenants.TenantCore, error) {
+	result, err := service.tenantData.GetAllTenantItems(id)
+	return result, err
+}
+
 // Create implements tenants.TenantServiceInterface.
 func (service *TenantService) Create(input tenants.TenantCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
 	err := service.tenantData.Register(input, fileImages, fileID, filenameImages, filenameID)
@@ -42,8 +54,9 @@ func (service *TenantService) ReadAll(addressFilter string) ([]tenants.TenantCor
 }
 
 // Remove implements tenants.TenantServiceInterface.
-func (*TenantService) Remove(id uint) error {
-	panic("unimplemented")
+func (service *TenantService) Remove(id uint) error {
+	err := service.tenantData.Delete(id)
+	return err
 }
 
 func New(repo tenants.TenantDataInterface) tenants.TenantServiceInterface {
