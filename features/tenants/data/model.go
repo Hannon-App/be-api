@@ -1,6 +1,7 @@
 package data
 
 import (
+	_item "Hannon-app/features/items/data"
 	"Hannon-app/features/tenants"
 	"time"
 
@@ -19,6 +20,7 @@ type Tenant struct {
 	IDcard    string
 	OpenTime  string
 	CloseTime string
+	Items     []_item.Item
 }
 
 func TenantModelToCore(dataModel Tenant) tenants.TenantCore {
