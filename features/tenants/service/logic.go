@@ -10,6 +10,12 @@ type TenantService struct {
 	tenantData tenants.TenantDataInterface
 }
 
+// ReadAllTenantItems implements tenants.TenantServiceInterface.
+func (service *TenantService) ReadAllTenantItems(id uint) ([]tenants.TenantCore, error) {
+	result, err := service.tenantData.GetAllTenantItems(id)
+	return result, err
+}
+
 // Create implements tenants.TenantServiceInterface.
 func (service *TenantService) Create(input tenants.TenantCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
 	err := service.tenantData.Register(input, fileImages, fileID, filenameImages, filenameID)

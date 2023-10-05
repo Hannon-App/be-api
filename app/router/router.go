@@ -69,5 +69,6 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	c.POST("/tenant", TenantHandlerAPI.Insert)
 	c.POST("/tenant/login", TenantHandlerAPI.Login)
 	c.GET("/tenant", TenantHandlerAPI.GetAllTenant)
+	c.GET("/tenant/:tenant_id/items", TenantHandlerAPI.GetTenantItems)
 
 }
