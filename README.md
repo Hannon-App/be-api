@@ -1,9 +1,9 @@
 
 # Potentivio apps
 
-![Logo]()
+![Logo](https://github.com/Hannon-App/be-api/blob/user2/Hannon.png)
 
-Readme in english [click here]().
+Readme in english [click here](https://github.com/Hannon-App/be-api/blob/user2/README_english.md).
 
 Hannon apps adalah sebuah aplikasi untuk peminjaman peralatan camping/ atribut peralatan outdoor yang menjembatani antara users (calon peminjam) dengan tenant (pihak yang meminjamkan). Dengan aplikasi ini, pihak tenant akan lebih mudah dan felxible dalam menjalankan bisnisnya untuk rent peralatan outdoornya, dan dari sisi users (calon peminjam) memudahkan untuk mencari items yang tersedia dari tenant dengan harga terjangkau karena tidak perlu untuk beli/ memiliki peralatan ketika akan melakukan kegiatan di outdoor (camping, hiking, dll). selain itu dengan adanya Hannon App kedepanya bisa menigkatkan intensitas pariwisata sehingga menjadi dampak baik untuk perkembangan pariwisata sehingga menghidupkan aktifitas ekonomi di wilayah tersebut.
 
@@ -31,7 +31,7 @@ Hannon apps adalah sebuah aplikasi untuk peminjaman peralatan camping/ atribut p
 
 ## Open APIs
 
-Untuk Open API bisa lihat selengkapnya [disini]()
+Untuk Open API bisa lihat selengkapnya [disini](https://github.com/Hannon-App/be-api/blob/user2/hannonapp-openAPI.yml)
 
 
 ## Menjalankan Lokal
