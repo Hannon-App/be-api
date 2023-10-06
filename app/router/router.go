@@ -1,6 +1,7 @@
 package router
 
 import (
+	"Hannon-app/app/config"
 	"Hannon-app/app/middlewares"
 	_adminData "Hannon-app/features/admins/data"
 	_adminHandler "Hannon-app/features/admins/handler"
@@ -17,6 +18,11 @@ import (
 	_itemData "Hannon-app/features/items/data"
 	_itemHandler "Hannon-app/features/items/handler"
 	_itemService "Hannon-app/features/items/service"
+
+	_rentData "Hannon-app/features/rents/data"
+	_rentHandler "Hannon-app/features/rents/handler"
+	_rentService "Hannon-app/features/rents/service"
+
 	"Hannon-app/helpers"
 	"net/http"
 
@@ -24,7 +30,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitRouter(db *gorm.DB, c *echo.Echo) {
+func InitRouter(db *gorm.DB, c *echo.Echo, cfg *config.AppConfig) {
 	UserData := _userData.New(db)
 	UserService := _userService.New(UserData)
 	UserHandlerAPI := _userHandler.New(UserService)
@@ -41,6 +47,10 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	TenantService := _tenantService.New(TenantData)
 	TenantHandlerAPI := _tenantHandler.New(TenantService)
 
+	RentData := _rentData.New(db)
+	RentService := _rentService.New(RentData, UserData, cfg)
+	RentHandlerAPI := _rentHandler.New(RentService, RentData)
+
 	c.GET("/test", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "get test success", nil))
 	})
@@ -55,6 +65,7 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	c.GET("/users/:user_id", UserHandlerAPI.GetUsertById, middlewares.JWTMiddleware())
 	c.DELETE("/users/:user_id", UserHandlerAPI.DeleteUser, middlewares.JWTMiddleware())
 	c.PUT("/users/:user_id", UserHandlerAPI.UpdateUser, middlewares.JWTMiddleware())
+	c.GET("/users", UserHandlerAPI.GetAllUser, middlewares.JWTMiddleware())
 
 	//items
 	c.GET("/items", ItemHandlerAPI.GetAll)
@@ -73,5 +84,12 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	c.GET("/tenant/:tenant_id/items", TenantHandlerAPI.GetTenantItems)
 	c.DELETE("/tenant/:tenant_id", TenantHandlerAPI.DeleteTenant)
 	c.GET("/tenant/:tenant_id", TenantHandlerAPI.GetTenantById)
+
+	//Rent
+	c.POST("/rent", RentHandlerAPI.CreateRent, middlewares.JWTMiddleware())
+	c.GET("/rent/:rent_id", RentHandlerAPI.ReadRentById)
+	c.PUT("/rent/:rent_id", RentHandlerAPI.UpdatebyId)
+	c.POST("/rentpayment/:rent_id", RentHandlerAPI.Payment, middlewares.JWTMiddleware())
+	c.POST("/callback", RentHandlerAPI.Callback)
 
 }
