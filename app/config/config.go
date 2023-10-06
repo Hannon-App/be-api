@@ -36,7 +36,7 @@ func ReadENV() *AppConfig {
 		app.CallbackKey = val
 		isRead = false
 	}
-	if val, found := os.LookupEnv("SECRET_KEY_XENDIT"); found {
+	if val, found := os.LookupEnv("XENDIT_SECRET_KEY"); found {
 		app.SecretKeyXendit = val
 		isRead = false
 	}
@@ -94,7 +94,7 @@ func ReadENV() *AppConfig {
 		app.DBHost = viper.Get("DBHOST").(string)
 		app.DBPort, _ = strconv.Atoi(viper.Get("DBPORT").(string))
 		app.DBName = viper.Get("DBNAME").(string)
-		app.SecretKeyXendit = viper.Get("SECRET_KEY_XENDIT").(string)
+		app.SecretKeyXendit = viper.Get("XENDIT_SECRET_KEY").(string)
 		app.CallbackKey = viper.Get("CALLBACK_KEY").(string)
 		//app.KEY_API = viper.Get("KEY_API").(string)
 		//app.KEY_API_SECRET = viper.Get("KEY_API_SECRET").(string)
