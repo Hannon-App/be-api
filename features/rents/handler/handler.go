@@ -6,7 +6,6 @@ import (
 	"Hannon-app/features/rents"
 	"Hannon-app/helpers"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -154,7 +153,7 @@ func (handler *RentHandler) Callback(c echo.Context) error {
 
 	callBackToken := headers.Get("X-Callback-Token")
 
-	if callBackToken != handler.config.CallbackKey
+	if callBackToken != handler.config.CallbackKey {
 		return c.JSON(http.StatusUnauthorized, "Unauthorized")
 	}
 

@@ -24,7 +24,7 @@ func main() {
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
 
-	router.InitRouter(dbMysql, e)
+	router.InitRouter(dbMysql, e, cfg)
 	//start server and port
 	e.Logger.Fatal(e.Start(":80"))
 }

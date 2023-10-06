@@ -1,6 +1,7 @@
 package router
 
 import (
+	"Hannon-app/app/config"
 	"Hannon-app/app/middlewares"
 	_adminData "Hannon-app/features/admins/data"
 	_adminHandler "Hannon-app/features/admins/handler"
@@ -29,7 +30,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitRouter(db *gorm.DB, c *echo.Echo) {
+func InitRouter(db *gorm.DB, c *echo.Echo, cfg *config.AppConfig) {
 	UserData := _userData.New(db)
 	UserService := _userService.New(UserData)
 	UserHandlerAPI := _userHandler.New(UserService)
@@ -47,7 +48,7 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	TenantHandlerAPI := _tenantHandler.New(TenantService)
 
 	RentData := _rentData.New(db)
-	RentService := _rentService.New(RentData, UserData)
+	RentService := _rentService.New(RentData, UserData, cfg)
 	RentHandlerAPI := _rentHandler.New(RentService, RentData)
 
 	c.GET("/test", func(c echo.Context) error {
