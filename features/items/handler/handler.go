@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"Hannon-app/app/middlewares"
 	"Hannon-app/features/items"
 	"Hannon-app/helpers"
 	"net/http"
@@ -66,13 +67,18 @@ func (handler *ItemHandler) GetAll(c echo.Context) error {
 
 func (handler *ItemHandler) DeleteItem(c echo.Context) error {
 
+	tenantID, er := middlewares.ExtractTokenTenant(c)
+	if er != nil {
+		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, er.Error(), nil))
+	}
+
 	id := c.Param("item_id")
 	idConv, errConv := strconv.Atoi(id)
 	if errConv != nil {
 		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid", nil))
 	}
 
-	err := handler.itemService.Delete(uint(idConv))
+	err := handler.itemService.Delete(tenantID, uint(idConv))
 	if err != nil {
 		if strings.Contains(err.Error(), "no row affected") {
 			return c.JSON(http.StatusNotFound, helpers.WebResponse(http.StatusNotFound, "operation failed, requested resource not found", nil))
@@ -104,6 +110,12 @@ func (handler *ItemHandler) GetItemByID(c echo.Context) error {
 }
 
 func (handler *ItemHandler) CreateItem(c echo.Context) error {
+
+	tenantID, er := middlewares.ExtractTokenTenant(c)
+	if er != nil {
+		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, er.Error(), nil))
+	}
+
 	var itemInput ItemRequest
 	errBind := c.Bind(&itemInput)
 
@@ -132,7 +144,7 @@ func (handler *ItemHandler) CreateItem(c echo.Context) error {
 	}
 
 	itemCore := RequestToCore(itemInput)
-	err := handler.itemService.Create(itemCore, file, fileName)
+	err := handler.itemService.Create(tenantID, itemCore, file, fileName)
 	if err != nil {
 		if strings.Contains(err.Error(), "validation") {
 			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, err.Error(), nil))
@@ -145,7 +157,14 @@ func (handler *ItemHandler) CreateItem(c echo.Context) error {
 }
 
 func (handler *ItemHandler) UpdateItemByID(c echo.Context) error {
+
+	tenantID, er := middlewares.ExtractTokenTenant(c)
+	if er != nil {
+		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, er.Error(), nil))
+	}
+
 	var itemInput ItemUpdateRequest
+
 	id := c.Param("item_id")
 
 	itemID, err := strconv.Atoi(id)
@@ -178,7 +197,7 @@ func (handler *ItemHandler) UpdateItemByID(c echo.Context) error {
 	}
 
 	itemCore := ItemUpdateRequestToCore(itemInput)
-	if err := handler.itemService.Update(uint(itemID), itemCore, file, fileName); err != nil {
+	if err := handler.itemService.Update(tenantID, uint(itemID), itemCore, file, fileName); err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.JSON(http.StatusNotFound, helpers.WebResponse(http.StatusNotFound, "item not found", nil))
 		}

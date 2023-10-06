@@ -15,7 +15,7 @@ func (service *AdminService) Login(email string, password string) (dataLogin adm
 	if err != nil {
 		return admins.AdminCore{}, "", err
 	}
-	token, err = middlewares.CreateToken(dataLogin.ID, dataLogin.ID, dataLogin.ID)
+	token, err = middlewares.CreateTokenAdmin(dataLogin.ID)
 	if err != nil {
 		return admins.AdminCore{}, "", err
 	}
