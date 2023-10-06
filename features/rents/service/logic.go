@@ -1,11 +1,11 @@
 package service
 
 import (
+	"Hannon-app/app/config"
 	"Hannon-app/features/rents"
 	"Hannon-app/features/users"
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
@@ -16,6 +16,7 @@ import (
 type RentService struct {
 	rentData rents.RentDataInterface
 	userData users.UserDataInterface
+	config   *config.AppConfig
 }
 
 // Callback implements rents.RentServiceInterface.
@@ -39,7 +40,7 @@ func (service *RentService) AcceptPayment(id uint, userid uint) error {
 	invoiceNum := fmt.Sprint("invoice/", rent.ID, "/", year, month, day, hour, minute, second)
 	invoiceNum = strings.ReplaceAll(invoiceNum, " ", "")
 	rent.InvoiceNumber = invoiceNum
-	xendit.Opt.SecretKey = os.Getenv("SECRET_KEY_XENDIT")
+	xendit.Opt.SecretKey = service.config.SecretKeyXendit
 
 	userData, err := service.userData.SelectById(userid)
 	if err != nil {
@@ -99,9 +100,10 @@ func (service *RentService) Add(input rents.RentCore) error {
 	return err
 }
 
-func New(repo rents.RentDataInterface, userRepo users.UserDataInterface) rents.RentServiceInterface {
+func New(repo rents.RentDataInterface, userRepo users.UserDataInterface, config *config.AppConfig) rents.RentServiceInterface {
 	return &RentService{
 		rentData: repo,
 		userData: userRepo,
+		config:   config,
 	}
 }

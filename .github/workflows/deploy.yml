@@ -62,5 +62,5 @@ jobs:
               --env DBNAME=${{ secrets.DBNAME }} \
               --env JWTSECRET=${{ secrets.JWTSECRET }} \
               --env XENDIT_SECRET_KEY=${{ secrets.XENDIT_SECRET_KEY }} \
-              --env XENDIT_CALLBACK_TOKEN=${{ secrets.CALLBACK_KEY }} \
+              --env CALLBACK_KEY=${{ secrets.CALLBACK_KEY }} \
               ${{ secrets.DOCKERHUB_USERNAME }}/hannonapp:latest

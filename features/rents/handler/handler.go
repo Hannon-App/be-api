@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"Hannon-app/app/config"
 	"Hannon-app/app/middlewares"
 	"Hannon-app/features/rents"
 	"Hannon-app/helpers"
@@ -16,6 +17,7 @@ import (
 type RentHandler struct {
 	rentService rents.RentServiceInterface
 	rentData    rents.RentDataInterface
+	config      *config.AppConfig
 }
 
 func New(service rents.RentServiceInterface, repo rents.RentDataInterface) *RentHandler {
@@ -152,7 +154,7 @@ func (handler *RentHandler) Callback(c echo.Context) error {
 
 	callBackToken := headers.Get("X-Callback-Token")
 
-	if callBackToken != os.Getenv("CALLBACK_KEY") {
+	if callBackToken != handler.config.CallbackKey
 		return c.JSON(http.StatusUnauthorized, "Unauthorized")
 	}
 
