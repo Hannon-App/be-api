@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 )
 
@@ -65,6 +66,11 @@ func (handler *UserHandler) AddUser(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "Error reading ID card file: "+errIDCardFile.Error(), nil))
 	}
 	idCardName := strings.ReplaceAll(idCardHeader.Filename, " ", "_")
+
+	validate := validator.New()
+	if err := validate.Struct(userInput); err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, err.Error(), nil))
+	}
 	var userCore = RequestToCore(userInput)
 	err := handler.userService.Add(userCore, imageFile, idCardFile, imageName, idCardName)
 	if err != nil {
@@ -159,4 +165,38 @@ func (handler *UserHandler) UpdateUser(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success updating user", nil))
+}
+
+func (handler *UserHandler) GetAllUser(c echo.Context) error {
+
+	var pageConv, userConv int
+	var errPageConv, errUserConv error
+
+	page := c.QueryParam("page")
+	if page != "" {
+		pageConv, errPageConv = strconv.Atoi(page)
+		if errPageConv != nil {
+			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid", nil))
+		}
+	}
+	user := c.QueryParam("userPerPage")
+	if user != "" {
+		userConv, errUserConv = strconv.Atoi(user)
+		if errUserConv != nil {
+			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid", nil))
+		}
+	}
+
+	search_name := c.QueryParam("searchName")
+
+	result, next, err := handler.userService.GetAll(uint(pageConv), uint(userConv), search_name)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "error read data", nil))
+	}
+	var userResponse []UserResponse
+	for _, value := range result {
+		userResponse = append(userResponse, UserCoreToResponse(value))
+
+	}
+	return c.JSON(http.StatusOK, helpers.FindAllWebResponse(http.StatusOK, "success read data", userResponse, next))
 }

@@ -14,6 +14,25 @@ type UserService struct {
 	validate *validator.Validate
 }
 
+// GetAll implements users.UserServiceInterface
+func (service *UserService) GetAll(page uint, userPerPage uint, searchName string) ([]users.UserCore, bool, error) {
+	result, count, err := service.userData.ReadAll(page, userPerPage, searchName)
+
+	next := true
+	var pages int64
+	if userPerPage != 0 {
+		pages = count / int64(userPerPage)
+		if count%int64(userPerPage) != 0 {
+			pages += 1
+		}
+		if page == uint(pages) {
+			next = false
+		}
+	}
+
+	return result, next, err
+}
+
 // Update implements users.UserServiceInterface
 func (service *UserService) Update(id uint, input users.UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
 	errValidate := service.validate.Struct(input)

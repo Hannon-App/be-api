@@ -18,11 +18,17 @@ type UserCore struct {
 	MembershipID uint
 	CreatedAt    time.Time
 	DeletedAt    time.Time
+	Membership   MembershipCore
 }
 
 type Login struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type MembershipCore struct {
+	JenisMembership string `json:"jenis_membership"`
+	Status          string `json:"status"`
 }
 
 type UserDataInterface interface {
@@ -31,6 +37,7 @@ type UserDataInterface interface {
 	SelectById(id uint) (UserCore, error)
 	Delete(id uint) error
 	UpdateUser(id uint, input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
+	ReadAll(page uint, userPerPage uint, searchName string) ([]UserCore, int64, error)
 }
 
 type UserServiceInterface interface {
@@ -39,4 +46,5 @@ type UserServiceInterface interface {
 	GetUserById(id uint) (UserCore, error)
 	Deletebyid(id uint) error
 	Update(id uint, input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
+	GetAll(page, userPerPage uint, searchName string) ([]UserCore, bool, error)
 }
