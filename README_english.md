@@ -1,9 +1,9 @@
 
 # Potentivio apps
 
-![Logo](https://github.com/Hannon-App/be-api/blob/user2/Hannon.png)
+![Logo](https://github.com/Hannon-App/be-api/blob/main/Hannon.png)
 
-Readme in english [click here](https://github.com/Hannon-App/be-api/blob/user2/README_english.md).
+Readme in english [click here](https://github.com/Hannon-App/be-api/blob/main/README_english.md).
 
 Hannon apps is an application for borrowing camping equipment/outdoor equipment attributes that bridges users (potential borrowers) with tenants (loan parties). With this application, it will be easier and more flexible for tenants to run their outdoor equipment rental business, and from the user side (potential borrowers) it will be easier to find items available from tenants at affordable prices because there is no need to buy/have equipment when carrying out activities. outdoors (camping, hiking, etc.). Apart from that, with the Hannon App in the future, it can increase the intensity of tourism so that it will have a good impact on tourism development, thus revitalizing economic activity in the region.
 
@@ -31,7 +31,7 @@ Hannon apps is an application for borrowing camping equipment/outdoor equipment 
 
 ## Open APIs
 
-For Open API, you can see more details [click here](https://github.com/Hannon-App/be-api/blob/user2/hannonapp-openAPI.yml)
+For Open API, you can see more details [click here](https://github.com/Hannon-App/be-api/blob/main/hannonapp-openAPI.yml)
 
 
 ## Running Local
