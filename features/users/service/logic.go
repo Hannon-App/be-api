@@ -15,8 +15,8 @@ type UserService struct {
 }
 
 // GetAll implements users.UserServiceInterface
-func (service *UserService) GetAll(page uint, userPerPage uint, searchName string) ([]users.UserCore, bool, error) {
-	result, count, err := service.userData.ReadAll(page, userPerPage, searchName)
+func (service *UserService) GetAll(adminID uint, page uint, userPerPage uint, searchName string) ([]users.UserCore, bool, error) {
+	result, count, err := service.userData.ReadAll(adminID, page, userPerPage, searchName)
 
 	next := true
 	var pages int64
@@ -33,8 +33,17 @@ func (service *UserService) GetAll(page uint, userPerPage uint, searchName strin
 	return result, next, err
 }
 
+// Deletebyid implements users.UserServiceInterface
+func (service *UserService) Deletebyid(adminID uint, id uint) error {
+	err := service.userData.Delete(adminID, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Update implements users.UserServiceInterface
-func (service *UserService) Update(id uint, input users.UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
+func (service *UserService) Update(uID uint, id uint, input users.UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
 	errValidate := service.validate.Struct(input)
 	if errValidate != nil {
 		return errors.New("error validate, user required")
@@ -42,7 +51,7 @@ func (service *UserService) Update(id uint, input users.UserCore, fileImages mul
 	if len(input.Password) < 8 {
 		return errors.New("validation error. password harus minimal 8 characters")
 	}
-	err := service.userData.UpdateUser(id, input, fileImages, fileID, filenameImages, filenameID)
+	err := service.userData.UpdateUser(uID, id, input, fileImages, fileID, filenameImages, filenameID)
 	return err
 }
 
@@ -60,15 +69,6 @@ func (service *UserService) Add(input users.UserCore, fileImages multipart.File,
 	errInsert := service.userData.Insert(input, fileImages, fileID, filenameImages, filenameID)
 	if errInsert != nil {
 		return errInsert
-	}
-	return nil
-}
-
-// Deletebyid implements users.UserServiceInterface
-func (service *UserService) Deletebyid(id uint) error {
-	err := service.userData.Delete(id)
-	if err != nil {
-		return err
 	}
 	return nil
 }

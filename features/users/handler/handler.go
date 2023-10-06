@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"Hannon-app/app/middlewares"
 	"Hannon-app/features/users"
 	"Hannon-app/helpers"
 	"strconv"
@@ -105,27 +106,33 @@ func (handler *UserHandler) GetUsertById(c echo.Context) error {
 }
 
 func (handler *UserHandler) DeleteUser(c echo.Context) error {
-	userInput := new(UserRequest)
-	errBind := c.Bind(&userInput)
-	if errBind != nil {
-		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "Error binding data", nil))
+	adminID, er := middlewares.ExtractTokenAdmin(c)
+	if er != nil {
+		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, er.Error(), nil))
 	}
 
-	// Mapping data dari UserRequest ke struct Core
-	var userCore uint
-	err := handler.userService.Deletebyid(userCore)
+	id := c.Param("user_id")
+	idConv, errConv := strconv.Atoi(id)
+	if errConv != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid", nil))
+	}
+
+	err := handler.userService.Deletebyid(adminID, uint(idConv))
 	if err != nil {
-		if strings.Contains(err.Error(), "not found") {
-			return c.JSON(http.StatusNotFound, helpers.WebResponse(http.StatusNotFound, "User not found", nil))
-		} else {
-			return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "error Deleted data user", nil))
-
+		if strings.Contains(err.Error(), "no row affected") {
+			return c.JSON(http.StatusNotFound, helpers.WebResponse(http.StatusNotFound, "operation failed, requested resource not found", nil))
 		}
+		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "error delete data", nil))
 	}
-	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "User Deleted successfully", nil))
+	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success delete data", nil))
 }
 
 func (handler *UserHandler) UpdateUser(c echo.Context) error {
+	uID, er := middlewares.ExtractTokenUser(c)
+	if er != nil {
+		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, er.Error(), nil))
+	}
+
 	var userInput UserRequest
 	id := c.Param("user_id")
 
@@ -157,7 +164,7 @@ func (handler *UserHandler) UpdateUser(c echo.Context) error {
 	updatedUser := RequestToCore(userInput)
 
 	// Call the UpdateUser method in the service layer to update the user.
-	if err := handler.userService.Update(uint(userID), updatedUser, imageFile, idCardFile, imageName, idCardName); err != nil {
+	if err := handler.userService.Update(uID, uint(userID), updatedUser, imageFile, idCardFile, imageName, idCardName); err != nil {
 		if strings.Contains(err.Error(), "not found") {
 			return c.JSON(http.StatusNotFound, helpers.WebResponse(http.StatusNotFound, "user not found", nil))
 		}
@@ -168,6 +175,10 @@ func (handler *UserHandler) UpdateUser(c echo.Context) error {
 }
 
 func (handler *UserHandler) GetAllUser(c echo.Context) error {
+	adminID, er := middlewares.ExtractTokenAdmin(c)
+	if er != nil {
+		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, er.Error(), nil))
+	}
 
 	var pageConv, userConv int
 	var errPageConv, errUserConv error
@@ -189,7 +200,7 @@ func (handler *UserHandler) GetAllUser(c echo.Context) error {
 
 	search_name := c.QueryParam("searchName")
 
-	result, next, err := handler.userService.GetAll(uint(pageConv), uint(userConv), search_name)
+	result, next, err := handler.userService.GetAll(adminID, uint(pageConv), uint(userConv), search_name)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "error read data", nil))
 	}
