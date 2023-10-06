@@ -39,7 +39,7 @@ func (service *TenantService) Login(email string, password string) (dataLogin te
 	if err != nil {
 		return tenants.TenantCore{}, "", err
 	}
-	token, err = middlewares.CreateToken(dataLogin.ID, dataLogin.ID, dataLogin.ID)
+	token, err = middlewares.CreateTokenTenant(dataLogin.ID)
 	if err != nil {
 		return tenants.TenantCore{}, "", err
 	}

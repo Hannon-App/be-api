@@ -56,12 +56,12 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	c.DELETE("/users/:user_id", UserHandlerAPI.DeleteUser, middlewares.JWTMiddleware())
 	c.PUT("/users/:user_id", UserHandlerAPI.UpdateUser, middlewares.JWTMiddleware())
 
+	//items
 	c.GET("/items", ItemHandlerAPI.GetAll)
-	c.DELETE("/items/:item_id", ItemHandlerAPI.DeleteItem)
+	c.DELETE("/items/:item_id", ItemHandlerAPI.DeleteItem, middlewares.JWTMiddleware())
 	c.GET("/items/:item_id", ItemHandlerAPI.GetItemByID)
-
-	c.POST("/items", ItemHandlerAPI.CreateItem)
-	c.PUT("/items/:item_id", ItemHandlerAPI.UpdateItemByID)
+	c.POST("/items", ItemHandlerAPI.CreateItem, middlewares.JWTMiddleware())
+	c.PUT("/items/:item_id", ItemHandlerAPI.UpdateItemByID, middlewares.JWTMiddleware())
 
 	//Admin
 	c.POST("/admin", AdminHandlerAPI.Login)
@@ -73,6 +73,5 @@ func InitRouter(db *gorm.DB, c *echo.Echo) {
 	c.GET("/tenant/:tenant_id/items", TenantHandlerAPI.GetTenantItems)
 	c.DELETE("/tenant/:tenant_id", TenantHandlerAPI.DeleteTenant)
 	c.GET("/tenant/:tenant_id", TenantHandlerAPI.GetTenantById)
-
 
 }

@@ -76,7 +76,7 @@ func (service *UserService) Login(email string, password string) (dataLogin user
 	if err != nil {
 		return users.UserCore{}, "", err
 	}
-	token, err = middlewares.CreateToken(dataLogin.ID, dataLogin.ID, dataLogin.ID)
+	token, err = middlewares.CreateTokenUser(dataLogin.ID)
 	if err != nil {
 		return users.UserCore{}, "", err
 	}

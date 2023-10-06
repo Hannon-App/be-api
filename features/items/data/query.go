@@ -65,8 +65,8 @@ func (repo *ItemQuery) ReadAll(page, itemPerPage uint, searchName string) ([]ite
 	return itemCore, totalCount, nil
 }
 
-func (repo *ItemQuery) Delete(id uint) error {
-	tx := repo.db.Where("id = ?", id).Delete(&Item{})
+func (repo *ItemQuery) Delete(tenantID, id uint) error {
+	tx := repo.db.Where("id = ? AND tenant_id = ?", id, tenantID).Delete(&Item{})
 	if tx.Error != nil {
 		return tx.Error
 	}
@@ -90,9 +90,11 @@ func (repo *ItemQuery) SelectById(id uint) (items.ItemCore, error) {
 	return resultCore, nil
 }
 
-func (repo *ItemQuery) Insert(input items.ItemCore, file multipart.File, filename string) error {
+func (repo *ItemQuery) Insert(tenantID uint, input items.ItemCore, file multipart.File, filename string) error {
 
 	var itemModel = ItemCoreToModel(input)
+
+	itemModel.TenantID = tenantID
 
 	if filename == "default.png" {
 		itemModel.Image = filename
@@ -116,9 +118,9 @@ func (repo *ItemQuery) Insert(input items.ItemCore, file multipart.File, filenam
 	return nil
 }
 
-func (repo *ItemQuery) UpdateDataItem(id uint, input items.ItemCore, file multipart.File, filename string) error {
+func (repo *ItemQuery) UpdateDataItem(tenantID uint, id uint, input items.ItemCore, file multipart.File, filename string) error {
 	var item Item
-	tx := repo.db.Where("id = ?", id).First(&item)
+	tx := repo.db.Where("id = ? AND tenant_id = ?", id, tenantID).First(&item)
 	if tx.Error != nil {
 		return tx.Error
 	}
