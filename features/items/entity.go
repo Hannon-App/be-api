@@ -1,6 +1,9 @@
 package items
 
-import "mime/multipart"
+import (
+	"mime/multipart"
+	"time"
+)
 
 type ItemCore struct {
 	ID               uint
@@ -11,6 +14,9 @@ type ItemCore struct {
 	Description_Item string
 	Broke_Cost       uint
 	Lost_Cost        uint
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	DeletedAt        time.Time
 }
 
 type ItemDataInterface interface {
