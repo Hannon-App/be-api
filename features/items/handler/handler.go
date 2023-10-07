@@ -224,22 +224,20 @@ func (handler *ItemHandler) GetAllItemsTenant(c echo.Context) error {
 			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid", nil))
 		}
 	}
-
-	itemPerPage := c.QueryParam("itemPerPage")
-	if itemPerPage != "" {
-		itemConv, errItemConv = strconv.Atoi(itemPerPage)
+	item := c.QueryParam("itemPerPage")
+	if item != "" {
+		itemConv, errItemConv = strconv.Atoi(item)
 		if errItemConv != nil {
 			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid", nil))
 		}
 	}
 
-	searchName := c.QueryParam("searchName")
+	search_name := c.QueryParam("searchName")
 
-	result, next, err := handler.itemService.GetItemsByTenant(tenantID, uint(pageConv), uint(itemConv), searchName)
+	result, next, err := handler.itemService.GetItemsByTenant(tenantID, uint(pageConv), uint(itemConv), search_name)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "error read data", nil))
 	}
-
 	var itemResponse []ItemResponseAll
 	for _, value := range result {
 		itemResponse = append(itemResponse, ItemResponseAll{
@@ -252,7 +250,7 @@ func (handler *ItemHandler) GetAllItemsTenant(c echo.Context) error {
 			Broke_Cost:       value.Broke_Cost,
 			Lost_Cost:        value.Lost_Cost,
 		})
-	}
 
+	}
 	return c.JSON(http.StatusOK, helpers.FindAllWebResponse(http.StatusOK, "success read data", itemResponse, next))
 }

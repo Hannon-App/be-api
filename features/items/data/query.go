@@ -154,25 +154,28 @@ func (repo *ItemQuery) ReadItemsByTenant(tenantID uint, page, itemPerPage uint, 
 	var itemData []Item
 	var totalCount int64
 
-	// Define a query that filters items by both tenantID and searchName.
 	query := repo.db.Where("tenant_id = ?", tenantID)
 
-	if searchName != "" {
-		query = query.Where("name LIKE ?", "%"+searchName+"%")
+	if page > 0 && itemPerPage > 0 {
+		offset := int((page - 1) * itemPerPage)
+
+		if searchName != "" {
+			query = query.Where("name LIKE ?", "%"+searchName+"%")
+		}
+
+		query = query.Offset(offset).Limit(int(itemPerPage))
+	} else {
+		if searchName != "" {
+			query = query.Where("name LIKE ?", "%"+searchName+"%")
+		}
 	}
 
-	// Calculate the offset for pagination.
-	offset := int((page - 1) * itemPerPage)
-
-	// Apply pagination and retrieve items.
-	query = query.Offset(offset).Limit(int(itemPerPage))
 	tx := query.Find(&itemData)
 
 	if tx.Error != nil {
 		return nil, 0, tx.Error
 	}
 
-	// Convert the retrieved items to ItemCore.
 	var itemCore []items.ItemCore
 	for _, value := range itemData {
 		itemCore = append(itemCore, items.ItemCore{
@@ -187,7 +190,6 @@ func (repo *ItemQuery) ReadItemsByTenant(tenantID uint, page, itemPerPage uint, 
 		})
 	}
 
-	// Count the total number of items that match the query.
 	repo.db.Model(&Item{}).Where("tenant_id = ?", tenantID).Count(&totalCount)
 
 	return itemCore, totalCount, nil
