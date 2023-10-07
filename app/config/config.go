@@ -32,14 +32,14 @@ func ReadENV() *AppConfig {
 	app := AppConfig{}
 	isRead := true
 
-	if val, found := os.LookupEnv("CALLBACK_KEY"); found {
-		app.CallbackKey = val
-		isRead = false
-	}
-	if val, found := os.LookupEnv("XENDIT_SECRET_KEY"); found {
-		app.SecretKeyXendit = val
-		isRead = false
-	}
+	// if val, found := os.LookupEnv("CALLBACK_KEY"); found {
+	// 	app.CallbackKey = val
+	// 	isRead = false
+	// }
+	// if val, found := os.LookupEnv("XENDIT_SECRET_KEY"); found {
+	// 	app.SecretKeyXendit = val
+	// 	isRead = false
+	// }
 	if val, found := os.LookupEnv("JWTSECRET"); found {
 		app.jwtKey = val
 		isRead = false
@@ -79,7 +79,7 @@ func ReadENV() *AppConfig {
 	}
 	if isRead {
 		viper.AddConfigPath(".")
-		viper.SetConfigName("localhost")
+		viper.SetConfigName("local")
 		// viper.SetConfigName("server")
 		viper.SetConfigType("env")
 
@@ -94,8 +94,8 @@ func ReadENV() *AppConfig {
 		app.DBHost = viper.Get("DBHOST").(string)
 		app.DBPort, _ = strconv.Atoi(viper.Get("DBPORT").(string))
 		app.DBName = viper.Get("DBNAME").(string)
-		app.SecretKeyXendit = viper.Get("XENDIT_SECRET_KEY").(string)
-		app.CallbackKey = viper.Get("CALLBACK_KEY").(string)
+		// app.SecretKeyXendit = viper.Get("XENDIT_SECRET_KEY").(string)
+		// app.CallbackKey = viper.Get("CALLBACK_KEY").(string)
 		//app.KEY_API = viper.Get("KEY_API").(string)
 		//app.KEY_API_SECRET = viper.Get("KEY_API_SECRET").(string)
 		//app.CLOUD_NAME = viper.Get("CLOUD_NAME").(string)

@@ -19,6 +19,7 @@ type ItemDataInterface interface {
 	SelectById(id uint) (ItemCore, error)
 	Insert(tenantID uint, input ItemCore, file multipart.File, filename string) error
 	UpdateDataItem(tenantID uint, id uint, input ItemCore, file multipart.File, filename string) error
+	ReadItemsByTenant(tenantID uint, page, item uint, searchName string) ([]ItemCore, int64, error)
 }
 
 type ItemServiceInterface interface {
@@ -27,4 +28,5 @@ type ItemServiceInterface interface {
 	GetById(id uint) (ItemCore, error)
 	Create(tenantID uint, input ItemCore, file multipart.File, filename string) error
 	Update(tenantID uint, id uint, input ItemCore, file multipart.File, filename string) error
+	GetItemsByTenant(tenantID uint, page, item uint, searchName string) ([]ItemCore, bool, error)
 }
