@@ -13,10 +13,36 @@ type ItemQuery struct {
 	db *gorm.DB
 }
 
+// UnarchiveItem implements items.ItemDataInterface.
+func (repo *ItemQuery) UnarchiveItem(tenantID uint, id uint, input items.ItemCore) error {
+	itemData := ItemCoreToModel(input)
+	tx := repo.db.Model(&Item{}).Where("tenant_id = ? AND id = ?", tenantID, id).Updates(&itemData)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return errors.New("no row affected")
+	}
+	return nil
+}
+
+// ArchiveItem implements items.ItemDataInterface.
+func (repo *ItemQuery) ArchiveItem(tenantID uint, id uint, input items.ItemCore) error {
+	itemData := ItemCoreToModel(input)
+	tx := repo.db.Model(&Item{}).Where("tenant_id = ? AND id = ?", tenantID, id).Updates(&itemData)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return errors.New("no row affected")
+	}
+	return nil
+}
+
 // ReadArchiveItem implements items.ItemDataInterface.
 func (repo *ItemQuery) ReadArchiveItem(tenantID uint) ([]items.ItemCore, error) {
 	var itemData []Item
-	tx := repo.db.Unscoped().Where("tenant_id = ?", tenantID).Find(&itemData)
+	tx := repo.db.Where("tenant_id = ? AND status = ?", tenantID, "archived").Find(&itemData)
 	if tx.Error != nil {
 		return []items.ItemCore{}, tx.Error
 	}
@@ -34,6 +60,7 @@ func (repo *ItemQuery) ReadArchiveItem(tenantID uint) ([]items.ItemCore, error) 
 			Description_Item: value.Description_Item,
 			Broke_Cost:       value.Broke_Cost,
 			Lost_Cost:        value.Lost_Cost,
+			Status:           value.Status,
 		})
 	}
 	return itemCore, nil

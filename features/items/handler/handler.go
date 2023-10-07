@@ -249,6 +249,7 @@ func (handler *ItemHandler) GetAllItemsTenant(c echo.Context) error {
 			Description_Item: value.Description_Item,
 			Broke_Cost:       value.Broke_Cost,
 			Lost_Cost:        value.Lost_Cost,
+			Status:           value.Status,
 		})
 
 	}
@@ -276,8 +277,57 @@ func (handler *ItemHandler) SelectArchivedItem(c echo.Context) error {
 			Description_Item: value.Description_Item,
 			Broke_Cost:       value.Broke_Cost,
 			Lost_Cost:        value.Lost_Cost,
+			Status:           value.Status,
 		})
 
 	}
 	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success read data", itemResponse))
+}
+
+func (handler *ItemHandler) Archive(c echo.Context) error {
+	tenantID, err := middlewares.ExtractTokenTenant(c)
+	if err != nil {
+		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, err.Error(), nil))
+	}
+	id := c.Param("item_id")
+	itemID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "invalid item ID", nil))
+	}
+
+	var itemUpdate ItemStatusRequest
+	itemUpdate.Status = "archived"
+	if err := c.Bind(&itemUpdate); err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "error binding data", nil))
+	}
+	result := ItemStatusToCore(itemUpdate)
+	errRead := handler.itemService.ArchiveItem(tenantID, uint(itemID), result)
+	if errRead != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, helpers.ErrInternalServer.Error(), nil))
+	}
+	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success archive item", nil))
+}
+
+func (handler *ItemHandler) Unarchive(c echo.Context) error {
+	tenantID, err := middlewares.ExtractTokenTenant(c)
+	if err != nil {
+		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, err.Error(), nil))
+	}
+	id := c.Param("item_id")
+	itemID, err := strconv.Atoi(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "invalid item ID", nil))
+	}
+
+	var itemUpdate ItemStatusRequest
+	itemUpdate.Status = "available"
+	if err := c.Bind(&itemUpdate); err != nil {
+		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "error binding data", nil))
+	}
+	result := ItemStatusToCore(itemUpdate)
+	errRead := handler.itemService.ArchiveItem(tenantID, uint(itemID), result)
+	if errRead != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, helpers.ErrInternalServer.Error(), nil))
+	}
+	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success unarchive item", nil))
 }
