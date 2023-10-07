@@ -14,8 +14,20 @@ type UserQuery struct {
 	dataLogin users.UserCore
 }
 
+// Delete implements users.UserDataInterface
+func (repo *UserQuery) Delete(adminID uint, id uint) error {
+	tx := repo.db.Where("id = ?", id).Delete(&User{})
+	if tx.Error != nil {
+		return tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return errors.New("no row affected")
+	}
+	return nil
+}
+
 // ReadAll implements users.UserDataInterface
-func (repo *UserQuery) ReadAll(page uint, userPerPage uint, searchName string) ([]users.UserCore, int64, error) {
+func (repo *UserQuery) ReadAll(adminID uint, page uint, userPerPage uint, searchName string) ([]users.UserCore, int64, error) {
 	var userData []User
 	var totalCount int64
 
@@ -53,9 +65,9 @@ func (repo *UserQuery) ReadAll(page uint, userPerPage uint, searchName string) (
 }
 
 // UpdateUser implements users.UserDataInterface
-func (repo *UserQuery) UpdateUser(id uint, input users.UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
+func (repo *UserQuery) UpdateUser(uID uint, id uint, input users.UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error {
 	var user User
-	tx := repo.db.Where("id = ?", id).First(&user)
+	tx := repo.db.Where("id = ? AND id = ?", id, uID).First(&user)
 	if tx.Error != nil {
 		return tx.Error
 	}
@@ -159,27 +171,6 @@ func (repo *UserQuery) Insert(input users.UserCore, fileImages multipart.File, f
 		return errors.New("no row affected")
 	}
 
-	return nil
-}
-
-// Delete implements users.UserDataInterface
-func (repo *UserQuery) Delete(id uint) error {
-	var userGorm User
-	tx := repo.db.First(&userGorm)
-	if tx.Error != nil {
-		return tx.Error
-	}
-
-	// Hapus pengguna dari database
-	tx = repo.db.Delete(&userGorm)
-	if tx.Error != nil {
-		return tx.Error
-	}
-
-	if tx.RowsAffected == 0 {
-		return errors.New("data not found to deleted")
-
-	}
 	return nil
 }
 

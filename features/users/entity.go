@@ -35,16 +35,16 @@ type UserDataInterface interface {
 	Login(email, password string) (UserCore, error)
 	Insert(input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
 	SelectById(id uint) (UserCore, error)
-	Delete(id uint) error
-	UpdateUser(id uint, input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
-	ReadAll(page uint, userPerPage uint, searchName string) ([]UserCore, int64, error)
+	Delete(adminID uint, id uint) error
+	UpdateUser(uID uint, id uint, input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
+	ReadAll(adminID uint, page uint, userPerPage uint, searchName string) ([]UserCore, int64, error)
 }
 
 type UserServiceInterface interface {
 	Login(email, password string) (UserCore, string, error)
 	Add(input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
 	GetUserById(id uint) (UserCore, error)
-	Deletebyid(id uint) error
-	Update(id uint, input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
-	GetAll(page, userPerPage uint, searchName string) ([]UserCore, bool, error)
+	Deletebyid(adminID uint, id uint) error
+	Update(uID uint, id uint, input UserCore, fileImages multipart.File, fileID multipart.File, filenameImages string, filenameID string) error
+	GetAll(adminID uint, page, userPerPage uint, searchName string) ([]UserCore, bool, error)
 }
