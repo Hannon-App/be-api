@@ -74,6 +74,7 @@ func InitRouter(db *gorm.DB, c *echo.Echo, cfg *config.AppConfig) {
 	c.POST("/items", ItemHandlerAPI.CreateItem, middlewares.JWTMiddleware())
 	c.PUT("/items/:item_id", ItemHandlerAPI.UpdateItemByID, middlewares.JWTMiddleware())
 	c.GET("/tenantitems", ItemHandlerAPI.GetAllItemsTenant, middlewares.JWTMiddleware())
+	c.GET("/archived", ItemHandlerAPI.SelectArchivedItem, middlewares.JWTMiddleware())
 
 	//Admin
 	c.POST("/admin", AdminHandlerAPI.Login)

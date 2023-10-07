@@ -9,6 +9,12 @@ type ItemService struct {
 	itemData items.ItemDataInterface
 }
 
+// GetArchiveItem implements items.ItemServiceInterface.
+func (service *ItemService) GetArchiveItem(tenantID uint) ([]items.ItemCore, error) {
+	result, err := service.itemData.ReadArchiveItem(tenantID)
+	return result, err
+}
+
 func New(repo items.ItemDataInterface) items.ItemServiceInterface {
 	return &ItemService{
 		itemData: repo,

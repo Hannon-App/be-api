@@ -13,6 +13,32 @@ type ItemQuery struct {
 	db *gorm.DB
 }
 
+// ReadArchiveItem implements items.ItemDataInterface.
+func (repo *ItemQuery) ReadArchiveItem(tenantID uint) ([]items.ItemCore, error) {
+	var itemData []Item
+	tx := repo.db.Where("tenant_id = ?", tenantID).Find(&itemData).Where("deleted_at = NOT NULL")
+	if tx.Error != nil {
+		return []items.ItemCore{}, tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return []items.ItemCore{}, errors.New("no row affected")
+	}
+	var itemCore []items.ItemCore
+	for _, value := range itemData {
+		itemCore = append(itemCore, items.ItemCore{
+			ID:               value.ID,
+			Name:             value.Name,
+			Stock:            value.Stock,
+			Rent_Price:       value.Rent_Price,
+			Image:            value.Image,
+			Description_Item: value.Description_Item,
+			Broke_Cost:       value.Broke_Cost,
+			Lost_Cost:        value.Lost_Cost,
+		})
+	}
+	return itemCore, nil
+}
+
 func New(db *gorm.DB) items.ItemDataInterface {
 	return &ItemQuery{
 		db: db,
