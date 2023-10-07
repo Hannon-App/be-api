@@ -16,7 +16,7 @@ type ItemQuery struct {
 // ReadArchiveItem implements items.ItemDataInterface.
 func (repo *ItemQuery) ReadArchiveItem(tenantID uint) ([]items.ItemCore, error) {
 	var itemData []Item
-	tx := repo.db.Where("tenant_id = ?", tenantID).Find(&itemData).Where("deleted_at = NOT NULL")
+	tx := repo.db.Where("tenant_id = ? AND deleted_at IS NOT NULL", tenantID).Find(&itemData)
 	if tx.Error != nil {
 		return []items.ItemCore{}, tx.Error
 	}
