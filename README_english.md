@@ -1,5 +1,5 @@
 
-# Potentivio apps
+# Hannon.Apps
 
 ![Logo](https://github.com/Hannon-App/be-api/blob/main/Hannon.png)
 
