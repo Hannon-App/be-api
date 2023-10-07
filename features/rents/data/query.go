@@ -14,7 +14,7 @@ type RentQuery struct {
 // Callback implements rents.RentDataInterface.
 func (repo *RentQuery) Callback(input rents.RentCore) error {
 	var data = RentCoreToModel(input)
-	tx := repo.db.Where("invoice_number = ?", data.InvoiceNumber).Updates(&data)
+	tx := repo.db.Model(&Rent{}).Where("invoice_number = ?", data.InvoiceNumber).Updates(&data)
 	if tx.Error != nil {
 		return tx.Error
 	}

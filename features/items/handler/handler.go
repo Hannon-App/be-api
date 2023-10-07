@@ -254,3 +254,30 @@ func (handler *ItemHandler) GetAllItemsTenant(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, helpers.FindAllWebResponse(http.StatusOK, "success read data", itemResponse, next))
 }
+
+func (handler *ItemHandler) SelectArchivedItem(c echo.Context) error {
+	tenantID, err := middlewares.ExtractTokenTenant(c)
+	if err != nil {
+		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, err.Error(), nil))
+	}
+
+	result, err := handler.itemService.GetArchiveItem(tenantID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "error read data", nil))
+	}
+	var itemResponse []ItemResponseAll
+	for _, value := range result {
+		itemResponse = append(itemResponse, ItemResponseAll{
+			ID:               value.ID,
+			Name:             value.Name,
+			Stock:            value.Stock,
+			Rent_Price:       value.Rent_Price,
+			Image:            value.Image,
+			Description_Item: value.Description_Item,
+			Broke_Cost:       value.Broke_Cost,
+			Lost_Cost:        value.Lost_Cost,
+		})
+
+	}
+	return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "success read data", itemResponse))
+}
