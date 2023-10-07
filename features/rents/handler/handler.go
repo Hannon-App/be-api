@@ -3,6 +3,7 @@ package handler
 import (
 	"Hannon-app/app/config"
 	"Hannon-app/app/middlewares"
+
 	"Hannon-app/features/rents"
 	"Hannon-app/helpers"
 	"net/http"
@@ -29,10 +30,7 @@ func New(service rents.RentServiceInterface, repo rents.RentDataInterface) *Rent
 func (handler *RentHandler) CreateRent(c echo.Context) error {
 	var rentData RentRequest
 	errBind := c.Bind(&rentData)
-	userID, errToken := middlewares.ExtractTokenUser(c)
-	if errToken != nil {
-		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, helpers.ErrForbiddenAccess.Error(), nil))
-	}
+	userID, _ := middlewares.ExtractTokenUser(c)
 
 	if errBind != nil {
 		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "error bind data. data not valid", nil))
@@ -140,10 +138,7 @@ func (handler *RentHandler) Payment(c echo.Context) error {
 	if errBind != nil {
 		return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "error bind data. data not valid", nil))
 	}
-	userID, errToken := middlewares.ExtractTokenUser(c)
-	if errToken != nil {
-		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, helpers.ErrForbiddenAccess.Error(), nil))
-	}
+	userID, _ := middlewares.ExtractTokenUser(c)
 	data.UserID = userID
 
 	err := handler.rentService.AcceptPayment(uint(id), data.UserID)

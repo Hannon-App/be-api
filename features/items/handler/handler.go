@@ -206,3 +206,51 @@ func (handler *ItemHandler) UpdateItemByID(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, helpers.WebResponse(http.StatusCreated, "success update data", nil))
 }
+
+func (handler *ItemHandler) GetAllItemsTenant(c echo.Context) error {
+
+	tenantID, err := middlewares.ExtractTokenTenant(c)
+	if err != nil {
+		return c.JSON(http.StatusForbidden, helpers.WebResponse(http.StatusForbidden, err.Error(), nil))
+	}
+
+	var pageConv, itemConv int
+	var errPageConv, errItemConv error
+
+	page := c.QueryParam("page")
+	if page != "" {
+		pageConv, errPageConv = strconv.Atoi(page)
+		if errPageConv != nil {
+			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid", nil))
+		}
+	}
+	item := c.QueryParam("itemPerPage")
+	if item != "" {
+		itemConv, errItemConv = strconv.Atoi(item)
+		if errItemConv != nil {
+			return c.JSON(http.StatusBadRequest, helpers.WebResponse(http.StatusBadRequest, "operation failed, request resource not valid", nil))
+		}
+	}
+
+	search_name := c.QueryParam("searchName")
+
+	result, next, err := handler.itemService.GetItemsByTenant(tenantID, uint(pageConv), uint(itemConv), search_name)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, helpers.WebResponse(http.StatusInternalServerError, "error read data", nil))
+	}
+	var itemResponse []ItemResponseAll
+	for _, value := range result {
+		itemResponse = append(itemResponse, ItemResponseAll{
+			ID:               value.ID,
+			Name:             value.Name,
+			Stock:            value.Stock,
+			Rent_Price:       value.Rent_Price,
+			Image:            value.Image,
+			Description_Item: value.Description_Item,
+			Broke_Cost:       value.Broke_Cost,
+			Lost_Cost:        value.Lost_Cost,
+		})
+
+	}
+	return c.JSON(http.StatusOK, helpers.FindAllWebResponse(http.StatusOK, "success read data", itemResponse, next))
+}

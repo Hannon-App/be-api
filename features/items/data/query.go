@@ -149,3 +149,48 @@ func (repo *ItemQuery) UpdateDataItem(tenantID uint, id uint, input items.ItemCo
 	}
 	return nil
 }
+
+func (repo *ItemQuery) ReadItemsByTenant(tenantID uint, page, itemPerPage uint, searchName string) ([]items.ItemCore, int64, error) {
+	var itemData []Item
+	var totalCount int64
+
+	query := repo.db.Where("tenant_id = ?", tenantID)
+
+	if page > 0 && itemPerPage > 0 {
+		offset := int((page - 1) * itemPerPage)
+
+		if searchName != "" {
+			query = query.Where("name LIKE ?", "%"+searchName+"%")
+		}
+
+		query = query.Offset(offset).Limit(int(itemPerPage))
+	} else {
+		if searchName != "" {
+			query = query.Where("name LIKE ?", "%"+searchName+"%")
+		}
+	}
+
+	tx := query.Find(&itemData)
+
+	if tx.Error != nil {
+		return nil, 0, tx.Error
+	}
+
+	var itemCore []items.ItemCore
+	for _, value := range itemData {
+		itemCore = append(itemCore, items.ItemCore{
+			ID:               value.ID,
+			Name:             value.Name,
+			Stock:            value.Stock,
+			Rent_Price:       value.Rent_Price,
+			Image:            value.Image,
+			Description_Item: value.Description_Item,
+			Broke_Cost:       value.Broke_Cost,
+			Lost_Cost:        value.Lost_Cost,
+		})
+	}
+
+	repo.db.Model(&Item{}).Where("tenant_id = ?", tenantID).Count(&totalCount)
+
+	return itemCore, totalCount, nil
+}

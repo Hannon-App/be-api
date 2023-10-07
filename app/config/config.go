@@ -80,7 +80,6 @@ func ReadENV() *AppConfig {
 	if isRead {
 		viper.AddConfigPath(".")
 		viper.SetConfigName("local")
-		// viper.SetConfigName("server")
 		viper.SetConfigType("env")
 
 		err := viper.ReadInConfig()
@@ -96,9 +95,6 @@ func ReadENV() *AppConfig {
 		app.DBName = viper.Get("DBNAME").(string)
 		app.SecretKeyXendit = viper.Get("XENDIT_SECRET_KEY").(string)
 		app.CallbackKey = viper.Get("CALLBACK_KEY").(string)
-		//app.KEY_API = viper.Get("KEY_API").(string)
-		//app.KEY_API_SECRET = viper.Get("KEY_API_SECRET").(string)
-		//app.CLOUD_NAME = viper.Get("CLOUD_NAME").(string)
 	}
 	JWT_SECRRET = app.jwtKey
 	return &app

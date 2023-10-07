@@ -49,3 +49,22 @@ func (service *ItemService) Create(tenantID uint, input items.ItemCore, file mul
 func (service *ItemService) Update(tenantID uint, id uint, input items.ItemCore, file multipart.File, filename string) error {
 	return service.itemData.UpdateDataItem(tenantID, id, input, file, filename)
 }
+
+func (service *ItemService) GetItemsByTenant(tenantID uint, page, item uint, searchName string) ([]items.ItemCore, bool, error) {
+
+	result, count, err := service.itemData.ReadItemsByTenant(tenantID, page, item, searchName)
+
+	next := true
+	var pages int64
+	if item != 0 {
+		pages = count / int64(item)
+		if count%int64(item) != 0 {
+			pages += 1
+		}
+		if page == uint(pages) {
+			next = false
+		}
+	}
+
+	return result, next, err
+}
