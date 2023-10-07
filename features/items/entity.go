@@ -17,6 +17,7 @@ type ItemCore struct {
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 	DeletedAt        time.Time
+	Status           string
 }
 
 type ItemDataInterface interface {
@@ -27,6 +28,8 @@ type ItemDataInterface interface {
 	UpdateDataItem(tenantID uint, id uint, input ItemCore, file multipart.File, filename string) error
 	ReadItemsByTenant(tenantID uint, page, item uint, searchName string) ([]ItemCore, int64, error)
 	ReadArchiveItem(tenantID uint) ([]ItemCore, error)
+	ArchiveItem(tenantID uint, id uint, input ItemCore) error
+	UnarchiveItem(tenantID uint, id uint, input ItemCore) error
 }
 
 type ItemServiceInterface interface {
@@ -37,4 +40,6 @@ type ItemServiceInterface interface {
 	Update(tenantID uint, id uint, input ItemCore, file multipart.File, filename string) error
 	GetItemsByTenant(tenantID uint, page, item uint, searchName string) ([]ItemCore, bool, error)
 	GetArchiveItem(tenantID uint) ([]ItemCore, error)
+	ArchiveItem(tenantID uint, id uint, input ItemCore) error
+	UnarchiveItem(tenantID uint, id uint, input ItemCore) error
 }

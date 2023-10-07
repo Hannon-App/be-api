@@ -10,6 +10,7 @@ type ItemResponse struct {
 	Description_Item string `json:"description_item"`
 	Broke_Cost       uint   `json:"broke_cost"`
 	Lost_Cost        uint   `json:"lost_cost"`
+	Status           string `json:"status"`
 }
 
 type ItemResponseAll struct {
@@ -21,6 +22,7 @@ type ItemResponseAll struct {
 	Description_Item string `json:"description_item"`
 	Broke_Cost       uint   `json:"broke_cost"`
 	Lost_Cost        uint   `json:"lost_cost"`
+	Status           string `json:"status"`
 }
 
 func ItemCoreToResponseAll(input items.ItemCore) ItemResponseAll {
@@ -33,6 +35,7 @@ func ItemCoreToResponseAll(input items.ItemCore) ItemResponseAll {
 		Description_Item: input.Description_Item,
 		Broke_Cost:       input.Broke_Cost,
 		Lost_Cost:        input.Lost_Cost,
+		Status:           input.Status,
 	}
 	return itemResp
 }

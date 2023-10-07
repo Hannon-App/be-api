@@ -2,6 +2,16 @@ package handler
 
 import "Hannon-app/features/items"
 
+type ItemStatusRequest struct {
+	Status string `json:"status"`
+}
+
+func ItemStatusToCore(input ItemStatusRequest) items.ItemCore {
+	return items.ItemCore{
+		Status: input.Status,
+	}
+}
+
 type ItemRequest struct {
 	Name             string `json:"name" form:"name" validate:"required"`
 	Stock            uint   `json:"stock" form:"stock" validate:"required"`

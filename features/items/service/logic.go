@@ -9,6 +9,18 @@ type ItemService struct {
 	itemData items.ItemDataInterface
 }
 
+// UnarchiveItem implements items.ItemServiceInterface.
+func (service *ItemService) UnarchiveItem(tenantID uint, id uint, input items.ItemCore) error {
+	err := service.itemData.UnarchiveItem(tenantID, id, input)
+	return err
+}
+
+// ArchiveItem implements items.ItemServiceInterface.
+func (service *ItemService) ArchiveItem(tenantID uint, id uint, input items.ItemCore) error {
+	err := service.itemData.ArchiveItem(tenantID, id, input)
+	return err
+}
+
 // GetArchiveItem implements items.ItemServiceInterface.
 func (service *ItemService) GetArchiveItem(tenantID uint) ([]items.ItemCore, error) {
 	result, err := service.itemData.ReadArchiveItem(tenantID)

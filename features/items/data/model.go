@@ -2,7 +2,6 @@ package data
 
 import (
 	"Hannon-app/features/items"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -17,6 +16,7 @@ type Item struct {
 	Broke_Cost       uint   `gorm:"broke_cost;not null"`
 	Lost_Cost        uint   `gorm:"lost_cost;not null"`
 	TenantID         uint
+	Status           string `gorm:"default:available"`
 }
 
 func ItemCoreToModel(input items.ItemCore) Item {
@@ -29,6 +29,7 @@ func ItemCoreToModel(input items.ItemCore) Item {
 		Description_Item: input.Description_Item,
 		Broke_Cost:       input.Broke_Cost,
 		Lost_Cost:        input.Lost_Cost,
+		Status:           input.Status,
 	}
 	return itemModel
 }
@@ -43,9 +44,7 @@ func ModelToCore(input Item) items.ItemCore {
 		Description_Item: input.Description_Item,
 		Broke_Cost:       input.Broke_Cost,
 		Lost_Cost:        input.Lost_Cost,
-		CreatedAt:        time.Time{},
-		UpdatedAt:        time.Time{},
-		DeletedAt:        time.Time{},
+		Status:           input.Status,
 	}
 	return itemCore
 }
