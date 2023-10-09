@@ -20,10 +20,11 @@ type RentHandler struct {
 	config      *config.AppConfig
 }
 
-func New(service rents.RentServiceInterface, repo rents.RentDataInterface) *RentHandler {
+func New(service rents.RentServiceInterface, repo rents.RentDataInterface, config *config.AppConfig) *RentHandler {
 	return &RentHandler{
 		rentService: service,
 		rentData:    repo,
+		config:      config,
 	}
 }
 
@@ -149,24 +150,38 @@ func (handler *RentHandler) Payment(c echo.Context) error {
 }
 
 func (handler *RentHandler) Callback(c echo.Context) error {
+	if handler == nil || handler.config == nil {
+		return c.JSON(http.StatusInternalServerError, "Handler or its config is not initialized")
+	}
+
 	req := c.Request()
 	headers := req.Header
 
+	if headers == nil {
+		return c.JSON(http.StatusInternalServerError, "Headers are missing")
+	}
+
+	// Get the callback token from headers
 	callBackToken := headers.Get("X-CALLBACK-TOKEN")
 
+	// Check the token
 	if callBackToken != handler.config.CallbackKey {
 		return c.JSON(http.StatusUnauthorized, "Unauthorized")
 	}
 
 	var callback CallBackRequest
-	c.Bind(&callback)
+	if err := c.Bind(&callback); err != nil {
+		return c.JSON(http.StatusBadRequest, "Invalid request payload")
+	}
 
 	callBackData := rents.RentCore{
 		Status:        callback.Status,
 		InvoiceNumber: callback.InvoiceNumber,
 	}
 
-	err := handler.rentService.Callback(callBackData)
+	if err := handler.rentService.Callback(callBackData); err != nil {
+		return c.JSON(http.StatusInternalServerError, "Failed to process callback")
+	}
 
-	return err
+	return c.JSON(http.StatusOK, "Callback processed successfully")
 }

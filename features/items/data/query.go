@@ -110,6 +110,7 @@ func (repo *ItemQuery) ReadAll(page, itemPerPage uint, searchName string) ([]ite
 			Description_Item: value.Description_Item,
 			Broke_Cost:       value.Broke_Cost,
 			Lost_Cost:        value.Lost_Cost,
+			Status:           value.Status,
 		})
 	}
 
@@ -240,6 +241,7 @@ func (repo *ItemQuery) ReadItemsByTenant(tenantID uint, page, itemPerPage uint, 
 			Description_Item: value.Description_Item,
 			Broke_Cost:       value.Broke_Cost,
 			Lost_Cost:        value.Lost_Cost,
+			Status:           value.Status,
 		})
 	}
 

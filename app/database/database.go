@@ -5,6 +5,8 @@ import (
 
 	tenantData "Hannon-app/features/tenants/data"
 
+	userCartData "Hannon-app/features/usercart/data"
+
 	rentData "Hannon-app/features/rents/data"
 
 	itemsData "Hannon-app/features/items/data"
@@ -37,6 +39,8 @@ func InittialMigration(db *gorm.DB) {
 	db.AutoMigrate(&adminsData.Admin{})
 
 	db.AutoMigrate(&tenantData.Tenant{})
+
+	db.AutoMigrate(&userCartData.UserCart{}, &userCartData.CartItem{})
 
 	db.AutoMigrate(&rentData.Rent{})
 
