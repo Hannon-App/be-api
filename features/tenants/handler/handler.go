@@ -2,7 +2,7 @@ package handler
 
 import (
 	"Hannon-app/app/middlewares"
-	_item "Hannon-app/features/items"
+	_item "Hannon-app/features/items/handler"
 	"Hannon-app/features/tenants"
 	"Hannon-app/helpers"
 	"net/http"
@@ -117,9 +117,9 @@ func (handler *TenantHandler) GetTenantItems(c echo.Context) error {
 	}
 	var tenantItems []TenantItemResponse
 	for _, tenant := range result {
-		var items []_item.ItemCore
+		var items []_item.ItemResponseAll
 		for _, item := range tenant.Items {
-			items = append(items, _item.ItemCore{
+			items = append(items, _item.ItemResponseAll{
 				ID:               item.ID,
 				Name:             item.Name,
 				Stock:            item.Stock,
@@ -128,6 +128,7 @@ func (handler *TenantHandler) GetTenantItems(c echo.Context) error {
 				Description_Item: item.Description_Item,
 				Broke_Cost:       item.Broke_Cost,
 				Lost_Cost:        item.Lost_Cost,
+				Status:           item.Status,
 			})
 		}
 		tenantItems = append(tenantItems, TenantItemResponse{

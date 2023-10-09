@@ -2,6 +2,7 @@ package data
 
 import (
 	"Hannon-app/features/items"
+	_cartData "Hannon-app/features/usercart/data"
 
 	"gorm.io/gorm"
 )
@@ -17,6 +18,7 @@ type Item struct {
 	Lost_Cost        uint   `gorm:"lost_cost;not null"`
 	TenantID         uint
 	Status           string `gorm:"default:available"`
+	UserCart         []_cartData.CartItem
 }
 
 func ItemCoreToModel(input items.ItemCore) Item {

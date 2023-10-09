@@ -1,6 +1,6 @@
 package handler
 
-import "Hannon-app/features/items"
+import _item "Hannon-app/features/items/handler"
 
 type TenantLoginResponse struct {
 	ID    uint   `json:"id"`
@@ -8,7 +8,6 @@ type TenantLoginResponse struct {
 	Role  string `json:"role"`
 	Token string `json:"token"`
 }
-
 
 type TenantResponse struct {
 	ID        uint   `json:"id"`
@@ -22,8 +21,8 @@ type TenantResponse struct {
 }
 
 type TenantItemResponse struct {
-	ID     uint             `json:"id"`
-	Name   string           `json:"name"`
-	Images string           `json:"images"`
-	Items  []items.ItemCore `json:"items"`
+	ID     uint                    `json:"id"`
+	Name   string                  `json:"name"`
+	Images string                  `json:"images"`
+	Items  []_item.ItemResponseAll `json:"items"`
 }

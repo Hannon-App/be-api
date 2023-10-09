@@ -23,6 +23,10 @@ import (
 	_rentHandler "Hannon-app/features/rents/handler"
 	_rentService "Hannon-app/features/rents/service"
 
+	_cartData "Hannon-app/features/usercart/data"
+	_cartHandler "Hannon-app/features/usercart/handler"
+	_cartService "Hannon-app/features/usercart/service"
+
 	"Hannon-app/helpers"
 	"net/http"
 
@@ -47,9 +51,13 @@ func InitRouter(db *gorm.DB, c *echo.Echo, cfg *config.AppConfig) {
 	TenantService := _tenantService.New(TenantData)
 	TenantHandlerAPI := _tenantHandler.New(TenantService)
 
+	CartData := _cartData.New(db)
+	CartService := _cartService.New(CartData)
+	CartHandlerAPI := _cartHandler.New(CartService)
+
 	RentData := _rentData.New(db)
 	RentService := _rentService.New(RentData, UserData, cfg)
-	RentHandlerAPI := _rentHandler.New(RentService, RentData)
+	RentHandlerAPI := _rentHandler.New(RentService, RentData, cfg)
 
 	c.GET("/test", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "get test success", nil))
@@ -96,4 +104,7 @@ func InitRouter(db *gorm.DB, c *echo.Echo, cfg *config.AppConfig) {
 	c.POST("/rentpayment/:rent_id", RentHandlerAPI.Payment, middlewares.JWTMiddleware())
 	c.POST("/callback", RentHandlerAPI.Callback)
 
+	//Cart
+	c.POST("/cart", CartHandlerAPI.CreateUserCart)
+	c.GET("/cart/:cart_id", CartHandlerAPI.GetCartById)
 }

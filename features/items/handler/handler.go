@@ -59,6 +59,7 @@ func (handler *ItemHandler) GetAll(c echo.Context) error {
 			Description_Item: value.Description_Item,
 			Broke_Cost:       value.Broke_Cost,
 			Lost_Cost:        value.Lost_Cost,
+			Status:           value.Status,
 		})
 
 	}

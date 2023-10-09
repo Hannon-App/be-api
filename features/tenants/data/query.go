@@ -6,7 +6,6 @@ import (
 	"Hannon-app/helpers"
 	"errors"
 	"mime/multipart"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -56,6 +55,7 @@ func (repo *TenantQuery) GetAllTenantItems(id uint) ([]tenants.TenantCore, error
 				Description_Item: item.Description_Item,
 				Broke_Cost:       item.Broke_Cost,
 				Lost_Cost:        item.Lost_Cost,
+				Status:           item.Status,
 			})
 		}
 
@@ -71,9 +71,6 @@ func (repo *TenantQuery) GetAllTenantItems(id uint) ([]tenants.TenantCore, error
 			IDcard:    value.IDcard,
 			OpenTime:  value.OpenTime,
 			CloseTime: value.CloseTime,
-			CreatedAt: time.Time{},
-			UpdatedAt: time.Time{},
-			DeletedAt: time.Time{},
 			Items:     items,
 		}
 		tenantsCore = append(tenantsCore, tenantCore)
@@ -116,9 +113,6 @@ func (repo *TenantQuery) GetAll(addressFilter string) ([]tenants.TenantCore, err
 			IDcard:    value.IDcard,
 			OpenTime:  value.OpenTime,
 			CloseTime: value.CloseTime,
-			CreatedAt: time.Time{},
-			UpdatedAt: time.Time{},
-			DeletedAt: time.Time{},
 		})
 	}
 	return TenantCore, nil

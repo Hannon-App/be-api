@@ -1,6 +1,7 @@
 package items
 
 import (
+	_CoreData "Hannon-app/features/usercart"
 	"mime/multipart"
 	"time"
 )
@@ -18,6 +19,7 @@ type ItemCore struct {
 	UpdatedAt        time.Time
 	DeletedAt        time.Time
 	Status           string
+	UserCart         _CoreData.UserCartCore
 }
 
 type ItemDataInterface interface {

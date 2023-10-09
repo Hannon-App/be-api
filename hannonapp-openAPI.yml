@@ -526,11 +526,629 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
+  /items:
+    get:
+      summary: "Get all items"
+      security:
+        - bearerAuth: []
+      tags:
+        - "Items"
+      responses:
+        200:
+          description: "Success get all items"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Items'  
+              example:
+                message: "Success get all items"
+                data:
+                  - id: 1
+                    name: "Tas"
+                    stock: 3
+                    rent_price: 100000
+                    Image: "foto.jpg"
+                    description: "Tas ini tahan air"
+                    broke_cost: 50000
+                    Lost_Cost: 80000
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    post:
+      summary: "Add New Item"
+      security:
+        - bearerAuth: []
+      tags:
+        - "Items"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              allOf:
+                - type: object
+                - $ref: '#/components/schemas/Items'
+            example:
+               name: "Tas"
+               stock: 3
+               rent_price: 100000
+               Image : "foto.jpg"
+               description: "Tas ini tahan air"
+               broke_cost:  50000
+               Lost_Cost:  80000
+      responses:
+        201:
+          description: "Sucess create item"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                  - $ref: '#/components/schemas/ResponseObj'
+              example:
+                message: "success create item"
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /items/{item_id}:
+    get:
+      summary: "Get specific item information"
+      security:
+        - bearerAuth: []
+      tags:
+        - "Items"
+      parameters:
+        - in: path
+          required: true
+          name: "item_id"
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Success get specific item information"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                  - $ref: '#/components/schemas/ResponseObj'
+              example:
+                message: "Success get specific user information"
+                data:
+                  id: 1
+                  name: "Tas"
+                  stock: 3
+                  rent_price: 100000
+                  Image : "foto.jpg"
+                  description: "Tas ini tahan air"
+                  broke_cost:  50000
+                  Lost_Cost:  80000
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    put:
+     # deprecated: true
+      summary: "Update item data"
+      security:
+        - bearerAuth: []
+      tags:
+        - "Items"
+      parameters:
+        - in: path
+          required: true
+          name: "item_id"
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              allOf:
+                - type: object
+                - $ref: '#/components/schemas/Items'
+            example:
+              name: "Tas"
+              stock: 3
+              rent_price: 100000
+              Image : "foto.jpg"
+              description: "Tas ini tahan air"
+              broke_cost:  50000
+              Lost_Cost:  80000
+      responses:
+        201:
+          description: "Update Item Success"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                  - $ref: '#/components/schemas/ResponseObj'
+              example:
+                message: "Update success"      
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    delete:
+      summary: "Delete Item"
+      security:
+        - bearerAuth: []
+      tags:
+        - "Items"
+      parameters:
+        - in: path
+          required: true
+          name: "item_id"
+          schema:
+            type: integer
+      responses:
+        200: 
+          description: "Success delete item"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                  - $ref: '#/components/schemas/ResponseObj'
+              example:
+                message: "Success delete item"
+                data: null
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /tenantitems:
+    get:
+      summary: "Get All Item By Tenant"
+      security:
+        - bearerAuth: []
+      tags:
+        - "Items"
+      responses:
+        '200':
+          description: "success read items data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        stock:
+                          type: integer
+                        rent_price:
+                          type: integer
+                        image:
+                          type: string
+                        description_item:
+                          type: string
+                        broke_cost:
+                          type: string
+                        lost_cost:
+                          type: string
+                        status:
+                          type: string
+              example:
+                code: 200
+                message: "success read items data"
+                data:
+                  - id: 1
+                    name: Tenda
+                    stock: 2
+                    rent_price: 10000
+                    image: tenda.png
+                    description_item: tenda bagus anti air
+                    broke_cost: 50000
+                    lost_cost: 75000
+                    status: available
 
+                  - id: 2
+                    name: Tas Carrier
+                    stock: 2
+                    rent_price: 25000
+                    image: carrier.png
+                    description_item: carrier bagus anti air
+                    broke_cost: 80000
+                    lost_cost: 120000
+                    status: available
+        '500':
+          $ref: '#/components/responses/500'
 
+  /archived:
+    get:
+      summary: Get all archived item by Tenant
+      security:
+        - bearerAuth: []
+      tags:
+        - Items
+      responses:
+        '200':
+          description: success read all archived items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        stock:
+                          type: integer
+                        rent_price:
+                          type: integer
+                        image:
+                          type: string
+                        description_item:
+                          type: string
+                        broke_cost:
+                          type: string
+                        lost_cost:
+                          type: string
+                        status:
+                          type: string
+              example:
+                code: 200
+                message: "success read archived items data"
+                data:
+                  - id: 1
+                    name: Tenda
+                    stock: 2
+                    rent_price: 10000
+                    image: tenda.png
+                    description_item: tenda bagus anti air
+                    broke_cost: 50000
+                    lost_cost: 75000
+                    status: archived
 
+                  - id: 2
+                    name: Tas Carrier
+                    stock: 2
+                    rent_price: 25000
+                    image: carrier.png
+                    description_item: carrier bagus anti air
+                    broke_cost: 80000
+                    lost_cost: 120000
+                    status: archived
+        '500':
+          $ref: '#/components/responses/500'          
+  /archive/{item_id}:
+    put:
+      summary: action for archive item
+      security:
+        - bearerAuth: []
+      tags:
+        - Items
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: success archived item
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+              example:
+                code: 200
+                message: success archived item
+  /unarchive/{item_id}:
+    put:
+      summary: action for unarchive item
+      security:
+        - bearerAuth: []
+      tags:
+        - Items
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: success unarchive item
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+              example:
+                code: 200
+                message: success unarchive Item
+  /tenant/{tenant_id}/items:
+    get:
+      summary: get all item by tenant_id
+      tags:
+        - Tenant
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: success read items data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        name:
+                          type: string
+                        images:
+                          type: string
+                        items:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              name:
+                                type: string
+                              stock:
+                                type: integer
+                              rent_price:
+                                type: integer
+                              image:
+                                type: string
+                              description_item: 
+                                type: string
+                              broke_cost:
+                                type: integer
+                              lost_cost:
+                                type: integer
+                              status:
+                                type: string
+              example:
+                code: 200
+                message: success read items data
+                data:
+                  - id : 1
+                    name: eiger
+                    images: eiger.png
+                    items:
+                      - id: 1
+                        name: tenda
+                        stock: 2
+                        rent_price: 10000
+                        image: tenda.png
+                        description_item: tenda bagus
+                        broke_cost: 50000
+                        lost_cost: 80000
+                        status: available
 
-                      
+                      - id: 2
+                        name: kompor
+                        stock: 2
+                        rent_price: 5000
+                        image: kompor.png
+                        description_item: kompor bagus
+                        broke_cost: 25000
+                        lost_cost: 40000
+                        status: available
+  /rent:
+    post:
+      summary: create invoice for payment
+      tags:
+        - Rent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start_date:
+                  type: string
+                end_date:
+                  type: string
+                total_price:
+                  type: integer
+                discount:
+                  type: integer
+              example:
+                start_date: 2023-10-10 00:00:00
+                end_date: 2023-10-15 00:00:00
+                total_price: 20000
+                discount: 1000
+      responses:
+        '200':
+          description: create data invoice
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+              example:
+                code: 200
+                message: success insert data
+  /rent/{rent_id}:
+    get:
+      summary: get invoice data by rent_id
+      tags:
+        - Rent
+      parameters:
+        - name: rent_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: success read invoice data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      start_date:
+                        type: string
+                      end_date:
+                        type: string
+                      status:
+                        type: string
+                      total_price:
+                        type: integer
+                      discount:
+                        type: integer
+                      payment_link:
+                        type: string
+                      invoice_number:
+                        type: string
+                      user_id:
+                        type: integer
+              example:
+                code: 200
+                message: success read data
+                data:
+                  - id: 84
+                    start_date: 2023-10-10 00:00:00
+                    end_date: 2023-10-15 00:00:00
+                    status: pending
+                    total_price: 10000
+                    discount: 1000
+                    payment_link: 
+                    invoice_number: 
+                    user_id: 7           
+    put:
+      summary: update data invoice
+      tags:
+        - Rent
+      parameters:
+        - name: rent_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start_date:
+                  type: string
+                end_date:
+                  type: string
+                total_price:
+                  type: integer
+                discount:
+                  type: integer
+                status:
+                  type: string
+              example:
+                start_date: 2023-10-10 00:00:00
+                end_date: 2023-10-15 00:00:00
+                total_price: 20000
+                discount: 1000
+                startus: waiting for payment
+      responses:
+        '200':
+          description: create data invoice
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+              example:
+                code: 200
+                message: success update data
+  /rentpayment/{rent_id}:
+    post:
+      summary: create payment link
+      tags:
+        - Rent
+      responses:
+        '200':
+          description: success create invoice
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    code:
+                      type: integer
+                    message:
+                      type: string
+              example:
+                code: 200
+                message: success create invoice
+      
 components:
   schemas:
     Users:
@@ -575,6 +1193,33 @@ components:
         updated_at:
           type: string
           format: date-time
+    Items:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: integer
+        name:
+          type: string
+          format: string
+        stock:
+          type: integer
+          format: integer
+        rent_price:
+          type: integer
+          format: integer
+        Image:
+          type: string
+          format: string
+        description:
+          type: string
+          format: string
+        broke_cost:
+          type: integer
+          format: integer
+        Lost_Cost:
+          type: integer
+          format: integer      
 
     ResponseObj:
       type: object
@@ -661,3 +1306,8 @@ components:
                 code: 500
                 message: internal server error
                 data: null
+  securitySchemes:
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
