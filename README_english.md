@@ -33,6 +33,10 @@ Hannon apps is an application for borrowing camping equipment/outdoor equipment 
 
 For Open API, you can see more details [click here](https://github.com/Hannon-App/be-api/blob/main/hannonapp-openAPI.yml)
 
+## ERD
+
+Untuk ERD Diagram [click here](https://app.diagrams.net/#G1vUnt4shuvShWc86VFJCGuL399IyZq0Bi)
+
 
 ## Running Local
 Cloning project
