@@ -31,8 +31,8 @@ Hannon apps adalah sebuah aplikasi untuk peminjaman peralatan camping/ atribut p
 
 ## Open APIs
 
-Untuk Open API bisa lihat selengkapnya [disini](https://github.com/Hannon-App/be-api/blob/main/hannonapp-openAPI.yml)
-Swagger Version [OpenAPI](https://app.swaggerhub.com/apis/firhanaf/HannonApp/1.0.1)
+- Untuk Open API bisa lihat selengkapnya [disini](https://github.com/Hannon-App/be-api/blob/main/hannonapp-openAPI.yml)
+- Swagger Version [OpenAPI](https://app.swaggerhub.com/apis/firhanaf/HannonApp/1.0.1)
 
 ## ERD
 
