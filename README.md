@@ -33,6 +33,10 @@ Hannon apps adalah sebuah aplikasi untuk peminjaman peralatan camping/ atribut p
 
 Untuk Open API bisa lihat selengkapnya [disini](https://github.com/Hannon-App/be-api/blob/main/hannonapp-openAPI.yml)
 
+## ERD
+
+Untuk ERD bisa lihat selengkapnya [disini](https://app.diagrams.net/#G1vUnt4shuvShWc86VFJCGuL399IyZq0Bi)
+
 
 ## Menjalankan Lokal
 
