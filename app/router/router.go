@@ -27,6 +27,10 @@ import (
 	_cartHandler "Hannon-app/features/usercart/handler"
 	_cartService "Hannon-app/features/usercart/service"
 
+	_paymentData "Hannon-app/features/payments/data"
+	_paymentHandler "Hannon-app/features/payments/handler"
+	_paymentService "Hannon-app/features/payments/service"
+
 	"Hannon-app/helpers"
 	"net/http"
 
@@ -58,6 +62,10 @@ func InitRouter(db *gorm.DB, c *echo.Echo, cfg *config.AppConfig) {
 	RentData := _rentData.New(db)
 	RentService := _rentService.New(RentData, UserData, cfg)
 	RentHandlerAPI := _rentHandler.New(RentService, RentData, cfg)
+
+	PaymentData := _paymentData.New(db)
+	PaymentService := _paymentService.New(PaymentData, cfg)
+	PaymentHandlerAPI := _paymentHandler.New(PaymentService)
 
 	c.GET("/test", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, helpers.WebResponse(http.StatusOK, "get test success", nil))
@@ -107,4 +115,7 @@ func InitRouter(db *gorm.DB, c *echo.Echo, cfg *config.AppConfig) {
 	//Cart
 	c.POST("/cart", CartHandlerAPI.CreateUserCart)
 	c.GET("/cart/:cart_id", CartHandlerAPI.GetCartById)
+
+	//Payment
+	c.POST("/virtual_accounts", PaymentHandlerAPI.CreateVirtualAccount)
 }
