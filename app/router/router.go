@@ -117,5 +117,6 @@ func InitRouter(db *gorm.DB, c *echo.Echo, cfg *config.AppConfig) {
 	c.GET("/cart/:cart_id", CartHandlerAPI.GetCartById)
 
 	//Payment
-	c.POST("/virtual_accounts", PaymentHandlerAPI.CreateVirtualAccount)
+	c.POST("/virtual-accounts", PaymentHandlerAPI.CreateVirtualAccount)
+	c.GET("/virtual-accounts/:payment_id", PaymentHandlerAPI.GetVAById)
 }

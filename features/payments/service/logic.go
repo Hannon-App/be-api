@@ -16,6 +16,12 @@ type PaymentService struct {
 	config      *config.AppConfig
 }
 
+// ReadVAById implements payments.PaymentServiceInterface.
+func (service *PaymentService) ReadVAById(id string) (payments.VirtualAccountObjectCore, error) {
+	result, err := service.PaymentData.GetVAById(id)
+	return result, err
+}
+
 // AddVA implements payments.PaymentServiceInterface.
 func (service *PaymentService) AddVA(input payments.VirtualAccountObjectCore) error {
 	xendit.Opt.SecretKey = service.config.SecretKeyXendit

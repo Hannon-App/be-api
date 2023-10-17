@@ -24,8 +24,10 @@ type VirtualAccountObjectCore struct {
 
 type PaymentDataInterface interface {
 	CreateVA(input VirtualAccountObjectCore) error
+	GetVAById(id string) (VirtualAccountObjectCore, error)
 }
 
 type PaymentServiceInterface interface {
 	AddVA(input VirtualAccountObjectCore) error
+	ReadVAById(id string) (VirtualAccountObjectCore, error)
 }
